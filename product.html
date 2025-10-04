@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produits - Smartphone Store</title>
+    <!-- Importation de Bootstrap et Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Styles CSS de base pour correspondre au design global */
+        body {
+            box-sizing: border-box;
+            background-color: #f8f9fa; /* secondary-color */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        :root {
+            --primary-color: #0d6efd;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .product-card {
+            border-radius: 0.75rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden; /* Assure que l'image est bien contenue */
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.15);
+        }
+        .product-card img {
+            height: 250px;
+            object-fit: cover;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+        .product-title {
+            font-weight: bold;
+            color: #343a40;
+        }
+        .product-price {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barre de navigation (Identique aux autres pages) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-mobile-alt me-2"></i>Smartphone Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="product.html">Produits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i>Panier
+                            <span class="badge bg-danger rounded-pill" id="cartBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="orders.html">
+                            <i class="fas fa-box me-1"></i>Mes Commandes
+                        </a>
+                    </li>
+                   <li class="nav-item">
+    <a class="nav-link" href="#" id="loginLink">
+         <i class="fas fa-sign-in-alt me-1"></i>Connexion
+    </a>
+</li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal - Catalogue des Produits -->
+    <div class="container main-content">
+        <h1 class="mb-5 text-center fw-bold">Notre Catalogue de Smartphones</h1>
+ <h1 class="mb-4 text-center">Catalogue de Produits</h1>
+        
+        <!-- NOUVELLE SECTION DE FILTRAGE PAR CATÉGORIE -->
+        <div class="text-center mb-5">
+            <div class="btn-group shadow-sm" role="group" aria-label="Filtre de catégories">
+                <!-- 'all' filtre affichera tous les produits. Ce bouton est actif par défaut -->
+                <button type="button" class="btn btn-outline-primary filter-button active" 
+                        data-category="all" onclick="setCategoryFilter('all', this)">
+                    <i class="fas fa-th-large me-2"></i>Tous les produits
+                </button>
+                
+                <button type="button" class="btn btn-outline-primary filter-button" 
+                        data-category="smartphone" onclick="setCategoryFilter('smartphone', this)">
+                    <i class="fas fa-mobile-alt me-2"></i>Smartphones
+                </button>
+                
+                <button type="button" class="btn btn-outline-primary filter-button" 
+                        data-category="ordinateur portable" onclick="setCategoryFilter('ordinateur portable', this)">
+                    <i class="fas fa-laptop me-2"></i>Ordinateurs Portables
+                </button>
+            </div>
+        </div>
+        <!-- FIN NOUVELLE SECTION -->
+        <!-- Conteneur pour les messages -->
+        <div id="messageContainer" class="container mb-4"></div>
+
+        <!-- Début du bloc dynamique -->
+        <div id="productContainer" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            
+            <!-- Message de chargement visible tant que le JS n'a pas pris le relais -->
+            <div class="col-12 text-center my-5" id="loadingMessage">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement des produits...</span>
+                </div>
+                <p class="mt-2 text-muted">Chargement du catalogue...</p>
+            </div>
+            
+            <!-- Les cartes de produits de la DB seront injectées ici par main.js -->
+        </div>
+        <!-- Fin du bloc dynamique -->
+        
+    </div>
+
+    <!-- Footer (Identique aux autres pages) -->
+    <footer class="footer bg-dark text-light py-3 mt-auto">
+        <div class="container text-center">
+            <p>&copy; 2024 Smartphone Store. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts Bootstrap et Logique -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    
+    <!-- Script de mise à jour des liens d'authentification (ce bloc est facultatif si main.js appelle déjà initApp) -->
+    <script>
+        // Ce bloc de script est maintenant superflu si vous avez utilisé le nouveau main.js
+        // qui appelle document.addEventListener('DOMContentLoaded', initApp);
+        // Vous pouvez le supprimer si vous le souhaitez, mais il ne causera pas d'erreur.
+        /*
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof updateAuthLinks === 'function') {
+                 updateAuthLinks();
+            }
+        });
+        */
+    </script>
+</body>
+</html>
+
+

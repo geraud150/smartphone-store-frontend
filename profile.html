@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - Smartphone Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-mobile-alt me-2"></i>Smartphone Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="product.html">Produits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i>Panier
+                            <span class="badge bg-danger rounded-pill" id="cartBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="orders.html">
+                            <i class="fas fa-box me-1"></i>Mes Commandes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html" id="loginLink">
+                            <i class="fas fa-user me-1"></i>Profil
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <div class="container main-content">
+        <h1 class="mb-4">Mon Profil</h1>
+        
+        <!-- Conteneur pour les messages -->
+        <div id="messageContainer" class="mb-4"></div>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <!-- Carte Informations du compte -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Informations du compte</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nom complet :</label>
+                            <p class="form-control-plaintext" id="userName">Chargement...</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email :</label>
+                            <p class="form-control-plaintext text-muted">Non disponible pour le moment</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte Actions du compte -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Zone dangereuse</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">Supprimer mon compte</h6>
+                        <p class="card-text text-muted">
+                            La suppression de votre compte est définitive et irréversible. 
+                            Toutes vos données (commandes, informations personnelles) seront supprimées.
+                        </p>
+                        <button class="btn btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash-alt me-2"></i>Supprimer mon compte
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bouton retour -->
+                <div class="text-center mt-4">
+                    <a href="index.html" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-3 mt-auto">
+        <div class="container text-center">
+            <p>&copy; 2024 Smartphone Store. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si l'utilisateur est connecté
+            const userName = localStorage.getItem('userName');
+            const token = localStorage.getItem('userToken');
+            
+            if (!token || !userName) {
+                alert('Vous devez être connecté pour accéder à cette page.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Afficher le nom de l'utilisateur
+            document.getElementById('userName').textContent = userName;
+        });
+    </script>
+</body>
+</html>

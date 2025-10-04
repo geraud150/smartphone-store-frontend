@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Commandes - Smartphone Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem 0;
+        }
+        .order-card {
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .order-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        .product-item {
+            border-bottom: 1px solid #dee2e6;
+        }
+        .product-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-mobile-alt me-2"></i>Smartphone Store
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="product.html">Produits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i>Panier
+                            <span class="badge bg-danger rounded-pill" id="cartBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="orders.html">
+                            <i class="fas fa-box me-1"></i>Mes Commandes
+                        </a>
+                   <li class="nav-item">
+    <a class="nav-link" href="#" id="loginLink">
+         <i class="fas fa-sign-in-alt me-1"></i>Connexion
+    </a>
+</li>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <div class="container main-content">
+        <h1 class="mb-4">Mes Commandes</h1>
+        <div id="messageContainer" class="mb-4"></div>
+        
+        <!-- Message de chargement -->
+        <div id="loadingMessage" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="mt-2">Chargement de vos commandes...</p>
+        </div>
+
+        <!-- Conteneur pour les commandes -->
+        <div id="ordersContainer">
+            <!-- Les commandes seront injectées ici par le JavaScript -->
+        </div>
+
+        <!-- Message si aucune commande -->
+        <div id="noOrdersMessage" class="text-center my-5" style="display: none;">
+            <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
+            <h4 class="text-muted">Vous n'avez pas encore de commandes.</h4>
+            <p>Découvrez nos produits et passez votre première commande !</p>
+            <a href="product.html" class="btn btn-primary mt-3">Voir les produits</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-3 mt-auto">
+        <div class="container text-center">
+            <p>&copy; 2024 Smartphone Store. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
