@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://votre-backend.onrender.com/api';
+const API_BASE_URL = 'https://smartphone-store-backend.onrender.com';
 
 // ==================================================================
 // VARIABLES GLOBALES ET UTILS
