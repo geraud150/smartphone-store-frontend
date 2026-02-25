@@ -531,7 +531,7 @@ async function loadOrders() {
               </span>
             </div>
             <div class="col-md-3 text-end">
-              <strong class="text-primary">${order.total_commande} €</strong>
+              <strong class="text-primary">${order.montant_total} €</strong>
             </div>
           </div>
         </div>
