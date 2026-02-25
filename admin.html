@@ -44,7 +44,7 @@
                 <input type="text" class="form-control" id="nom" required placeholder="ex: iPhone 15 Pro">
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Prix (FCFA / €) *</label>
+                <label class="form-label fw-bold">Prix (€) *</label>
                 <input type="number" class="form-control" id="prix" step="0.01" required placeholder="Montant">
             </div>
         </div>
@@ -155,7 +155,8 @@
                 <tr>
                     <td><img src="https://smartphone-store-backend.onrender.com${p.url_image}" class="product-img-td" onerror="this.src='https://placehold.co/60x60?text=Err'"></td>
                     <td><strong>${p.nom}</strong><br><small class="text-muted">${p.categorie}</small></td>
-                    <td>${parseFloat(p.prix).toLocaleString()}</td>
+                    <!-- AJOUT DE LA MONNAIE ICI -->
+                    <td><span class="badge bg-light text-dark border">${parseFloat(p.prix).toLocaleString()} euro</span></td>
                     <td>
                         <div class="btn-group">
                             <button class="btn btn-sm btn-outline-success btn-action" onclick='prepareEdit(${JSON.stringify(p).replace(/'/g, "&apos;")})'>Editer</button>
