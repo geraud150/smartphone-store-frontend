@@ -118,7 +118,7 @@ async function handleLogin(event) {
     if (response.ok) {
       localStorage.setItem('userToken', result.token);
       localStorage.setItem('userName', result.user.name);
-
+      localStorage.setItem('userEmail', result.user.email);
       messageContainer.innerHTML = `
         <div class="alert alert-success">
           Connexion réussie ! Redirection...
@@ -149,7 +149,7 @@ function updateAuthLinks() {
   const userToken = localStorage.getItem('userToken');
   const userName = localStorage.getItem('userName');
   const loginLink = document.getElementById('loginLink');
-
+  const userEmail = localStorage.getItem('userEmail');
   if (loginLink) {
     if (userToken && userName) {
       loginLink.parentElement.innerHTML = `
@@ -177,6 +177,7 @@ function handleLogout(event) {
   event.preventDefault();
   localStorage.removeItem('userToken');
   localStorage.removeItem('userName');
+  localStorage.removeItem('userEmail');
   alert('Vous êtes déconnecté.');
   window.location.href = 'index.html';
 }
