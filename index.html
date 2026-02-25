@@ -19,14 +19,44 @@
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 80px 20px;
+            padding: 60px 20px;
             border-radius: 1rem;
             margin-bottom: 3rem;
         }
 
-        .card { border: none; border-radius: 12px; transition: all 0.3s ease; overflow: hidden; }
+        /* Nouveau Design des Cartes (selon ton image) */
+        .card { border: none; border-radius: 12px; transition: all 0.3s ease; overflow: hidden; background: #fff; }
         .card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .card-img-top { height: 220px; object-fit: contain; padding: 20px; background: #fff; }
+        .card-img-top { height: 200px; object-fit: contain; padding: 20px; }
+        
+        .category-badge {
+            background-color: #6c757d;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .product-specs {
+            font-size: 0.9rem;
+            color: #495057;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .price-tag {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #212529;
+            margin: 15px 0;
+            text-align: left;
+        }
         
         #cartBadge { font-size: 0.7rem; }
         #messageContainer { position: fixed; top: 80px; right: 20px; z-index: 1050; min-width: 280px; }
@@ -45,23 +75,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.html">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="product.html">Produits</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="product.html">Produits</a></li>
                     <li class="nav-item">
                         <a class="nav-link position-relative px-3" href="cart.html">
                             <i class="fas fa-shopping-cart fa-lg"></i>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartBadge" style="display: none;">0</span>
                         </a>
                     </li>
-                    <!-- Zone de connexion dynamique injectée par main.js -->
                     <li class="nav-item ms-lg-3" id="authSection">
-                        <a id="loginLink" class="btn btn-outline-light btn-sm px-4 rounded-pill" href="login.html">
-                            <i class="fas fa-sign-in-alt me-1"></i>Connexion
-                        </a>
+                        <a id="loginLink" class="btn btn-outline-light btn-sm px-4 rounded-pill" href="login.html">Connexion</a>
                     </li>
                 </ul>
             </div>
@@ -72,69 +95,154 @@
 
     <div class="container mt-4">
         <div class="hero-section text-center">
-            <h1 class="display-4 fw-bold">La Tech au meilleur prix</h1>
-            <p class="lead mb-4">Découvrez notre sélection exclusive de smartphones dernière génération.</p>
-            <a href="product.html" class="btn btn-light btn-lg px-5 rounded-pill fw-bold text-primary">Acheter maintenant</a>
+            <h1 class="display-5 fw-bold">La Tech au meilleur prix</h1>
+            <p class="lead mb-4">Découvrez notre sélection exclusive.</p>
+            <a href="product.html" class="btn btn-light px-5 rounded-pill fw-bold text-primary shadow">Voir le catalogue</a>
         </div>
-    </div>
 
-    <!-- Bannière de bienvenue personnalisée (si connecté) -->
-    <div id="userWelcomeSection" class="container mb-5" style="display: none;">
-        <div class="card bg-white border-primary shadow-sm border-start border-5">
-            <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-                <div>
+        <!-- Bannière de bienvenue -->
+        <div id="userWelcomeSection" class="mb-5" style="display: none;">
+            <div class="card bg-white border-primary shadow-sm border-start border-5">
+                <div class="card-body">
                     <h5 class="mb-0">Content de vous revoir, <span id="welcomeName" class="text-primary fw-bold">...</span> !</h5>
                     <small class="text-muted" id="welcomeEmail"></small>
                 </div>
-                <a href="orders.html" class="btn btn-primary btn-sm rounded-pill px-4">
-                    <i class="fas fa-box me-2"></i>Mes Commandes
-                </a>
             </div>
         </div>
-    </div>
 
-    <!-- Catalogue Statique (Best-Sellers) -->
-    <div class="container my-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold">Nos Best-Sellers</h2>
-            <a href="product.html" class="text-decoration-none">Voir tout le catalogue <i class="fas fa-arrow-right ms-1"></i></a>
-        </div>
+        <!-- Section Produits (2 rangées) -->
+        <h2 class="fw-bold mb-4">Nos Incontournables</h2>
         
-        <!-- Note: On n'utilise PAS l'id "fullProductContainer" ici pour ne pas charger les produits de l'admin -->
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            <!-- Produit 1 -->
+            <!-- Rangée 1 - Produit 1 -->
             <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="iPhone 13">
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">iPhone 13</h5>
-                        <p class="text-muted small">Apple</p>
-                        <p class="card-text text-primary fw-bold fs-5">799 €</p>
-                        <button class="btn btn-outline-primary rounded-pill w-100">Détails</button>
+                <div class="card h-100 shadow-sm p-3">
+                    <img src="https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="iPhone 15 Pro">
+                    <div class="card-body p-0">
+                        <h4 class="text-primary fw-bold mb-1">iPhone 15 Pro</h4>
+                        <span class="category-badge">Smartphone</span>
+                        <p class="text-muted small mb-0">Le dernier bijou d'Apple en titane.</p>
+                        
+                        <div class="product-specs">
+                            <div><i class="fas fa-microchip me-2"></i>RAM: 8 Go</div>
+                            <div><i class="fas fa-hdd me-2"></i>Stockage: 128 Go</div>
+                        </div>
+                        
+                        <div class="price-tag">1229.00 €</div>
+                        <a href="product.html" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                        </a>
                     </div>
                 </div>
             </div>
-            <!-- Produit 2 -->
+
+            <!-- Rangée 1 - Produit 2 -->
             <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="Samsung Galaxy S21">
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">Samsung S21</h5>
-                        <p class="text-muted small">Samsung</p>
-                        <p class="card-text text-primary fw-bold fs-5">699 €</p>
-                        <button class="btn btn-outline-primary rounded-pill w-100">Détails</button>
+                <div class="card h-100 shadow-sm p-3">
+                    <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="Samsung S23">
+                    <div class="card-body p-0">
+                        <h4 class="text-primary fw-bold mb-1">Samsung S23</h4>
+                        <span class="category-badge">Smartphone</span>
+                        <p class="text-muted small mb-0">L'excellence photographique Android.</p>
+                        
+                        <div class="product-specs">
+                            <div><i class="fas fa-microchip me-2"></i>RAM: 8 Go</div>
+                            <div><i class="fas fa-hdd me-2"></i>Stockage: 256 Go</div>
+                        </div>
+                        
+                        <div class="price-tag">959.00 €</div>
+                        <a href="product.html" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                        </a>
                     </div>
                 </div>
             </div>
-            <!-- Produit 3 -->
+
+            <!-- Rangée 1 - Produit 3 -->
             <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="Google Pixel 6">
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">Google Pixel 6</h5>
-                        <p class="text-muted small">Google</p>
-                        <p class="card-text text-primary fw-bold fs-5">599 €</p>
-                        <button class="btn btn-outline-primary rounded-pill w-100">Détails</button>
+                <div class="card h-100 shadow-sm p-3">
+                    <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="Pixel 8">
+                    <div class="card-body p-0">
+                        <h4 class="text-primary fw-bold mb-1">Google Pixel 8</h4>
+                        <span class="category-badge">Smartphone</span>
+                        <p class="text-muted small mb-0">L'intelligence artificielle au creux de la main.</p>
+                        
+                        <div class="product-specs">
+                            <div><i class="fas fa-microchip me-2"></i>RAM: 8 Go</div>
+                            <div><i class="fas fa-hdd me-2"></i>Stockage: 128 Go</div>
+                        </div>
+                        
+                        <div class="price-tag">799.00 €</div>
+                        <a href="product.html" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DEUXIÈME RANGÉE -->
+            <!-- Rangée 2 - Produit 4 -->
+            <div class="col">
+                <div class="card h-100 shadow-sm p-3">
+                    <img src="https://images.unsplash.com/photo-1567581935884-3349723552ca?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="Xiaomi 13">
+                    <div class="card-body p-0">
+                        <h4 class="text-primary fw-bold mb-1">Xiaomi 13 Pro</h4>
+                        <span class="category-badge">Smartphone</span>
+                        <p class="text-muted small mb-0">Le rapport performance/prix ultime.</p>
+                        
+                        <div class="product-specs">
+                            <div><i class="fas fa-microchip me-2"></i>RAM: 12 Go</div>
+                            <div><i class="fas fa-hdd me-2"></i>Stockage: 256 Go</div>
+                        </div>
+                        
+                        <div class="price-tag">899.00 €</div>
+                        <a href="product.html" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rangée 2 - Produit 5 -->
+            <div class="col">
+                <div class="card h-100 shadow-sm p-3">
+                    <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="iPhone 14">
+                    <div class="card-body p-0">
+                        <h4 class="text-primary fw-bold mb-1">iPhone 14</h4>
+                        <span class="category-badge">Smartphone</span>
+                        <p class="text-muted small mb-0">La fiabilité Apple accessible.</p>
+                        
+                        <div class="product-specs">
+                            <div><i class="fas fa-microchip me-2"></i>RAM: 6 Go</div>
+                            <div><i class="fas fa-hdd me-2"></i>Stockage: 128 Go</div>
+                        </div>
+                        
+                        <div class="price-tag">699.00 €</div>
+                        <a href="product.html" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rangée 2 - Produit 6 -->
+            <div class="col">
+                <div class="card h-100 shadow-sm p-3">
+                    <img src="https://images.unsplash.com/photo-1556656793-062ff9878233?auto=format&fit=crop&w=300&q=80" class="card-img-top" alt="Samsung A54">
+                    <div class="card-body p-0">
+                        <h4 class="text-primary fw-bold mb-1">Samsung A54</h4>
+                        <span class="category-badge">Smartphone</span>
+                        <p class="text-muted small mb-0">Le meilleur du milieu de gamme.</p>
+                        
+                        <div class="product-specs">
+                            <div><i class="fas fa-microchip me-2"></i>RAM: 6 Go</div>
+                            <div><i class="fas fa-hdd me-2"></i>Stockage: 128 Go</div>
+                        </div>
+                        
+                        <div class="price-tag">449.00 €</div>
+                        <a href="product.html" class="btn btn-primary rounded-pill w-100 fw-bold">
+                            <i class="fas fa-shopping-cart me-2"></i>Ajouter au panier
+                        </a>
                     </div>
                 </div>
             </div>
@@ -143,8 +251,6 @@
 
     <footer class="bg-dark text-light py-5 mt-5">
         <div class="container text-center">
-            <i class="fas fa-mobile-alt fa-3x mb-3 text-primary"></i>
-            <h5 class="fw-bold">Smartphone Store</h5>
             <p class="text-muted small">&copy; 2024 Smartphone Store. Tous droits réservés.</p>
         </div>
     </footer>
@@ -153,24 +259,18 @@
     <script src="/JS/main.js"></script>
 
     <script>
-        // Script local pour gérer la bannière de bienvenue sans erreur undefined
         document.addEventListener("DOMContentLoaded", () => {
             const userName = localStorage.getItem('userName');
             const userEmail = localStorage.getItem('userEmail');
-            
             if (userName) {
                 const welcomeSection = document.getElementById('userWelcomeSection');
                 if (welcomeSection) {
                     welcomeSection.style.display = 'block';
                     document.getElementById('welcomeName').textContent = userName;
-                    
                     const emailElement = document.getElementById('welcomeEmail');
-                    // On n'affiche l'email que s'il est valide
                     if (userEmail && userEmail !== "undefined") {
                         emailElement.textContent = userEmail;
-                    } else {
-                        emailElement.style.display = 'none';
-                    }
+                    } else { emailElement.style.display = 'none'; }
                 }
             }
         });
