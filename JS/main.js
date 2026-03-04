@@ -6,6 +6,9 @@ function getProductImageUrl(url) {
   if (!url) return "https://placehold.co/400x300/e9ecef/212529?text=Pas+d'image";
   
   // Si l'image vient de ton dossier uploads sur Render
+  if (url.startsWith('http')) {
+    return url;
+  }
   if (url.startsWith('/uploads')) {
     return `${BACKEND_URL}${url}`;
   }
