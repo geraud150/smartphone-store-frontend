@@ -182,23 +182,31 @@
     };
 
     async function loadProducts() {
-        const token = localStorage.getItem('userToken');
-        try {
-            const res = await fetch(`${API_BASE}/api/admin/products`, {
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json'
-                }
-            });
-            
-            const products = await res.json();
-            const list = document.getElementById('products-list');
-            
-            if (!Array.isArray(products)) {
-                list.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Données corrompues reçues.</td></tr>`;
-                return;
+    const token = localStorage.getItem('userToken');
+    
+    if (!token) {
+        alert('⛔ Vous devez être connecté.');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/admin/products`, {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
             }
+        });
+        
+        if (!res.ok) {
+            const error = await res.json();
+            const errorMsg = error.message || `Erreur ${res.status}`;
+            document.getElementById('products-list').innerHTML = 
+                `<tr><td colspan="6" class="text-center text-danger">❌ ${errorMsg}</td></tr>`;
+            return;
+        }
 
+        const products = await res.json();
             list.innerHTML = products.map(p => `
                 <tr class="${p.actif === 0 ? 'archived-row' : ''}">
                     <td><img src="${getImgUrl(p.url_image)}" class="product-img-td"></td>
@@ -237,11 +245,12 @@
                     </td>
                 </tr>
             `).join('');
-        } catch (err) {
-            console.error("Erreur chargement:", err);
-            document.getElementById('products-list').innerHTML = `<tr><td colspan="6" class="text-center text-danger">Erreur : ${err.message}</td></tr>`;
-        }
+       } catch (err) {
+        console.error("Erreur:", err);
+        document.getElementById('products-list').innerHTML = 
+            `<tr><td colspan="6" class="text-center text-danger">❌ ${err.message}</td></tr>`;
     }
+}
 
     async function toggleStatus(id, currentStatus) {
         const token = localStorage.getItem('userToken');
