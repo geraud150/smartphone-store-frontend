@@ -34,6 +34,9 @@
         
         .archived-row { opacity: 0.6; background-color: #f1f1f1 !important; }
         .status-badge { font-size: 0.75rem; padding: 4px 8px; }
+    
+    .stock-badge { cursor: pointer; transition: 0.2s; }
+    .stock-badge:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -44,7 +47,7 @@
     <form id="productForm">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-bold">Nom du smartphone *</label>
+                <label class="form-label fw-bold">Nom du produit *</label>
                 <input type="text" class="form-control" id="nom" required placeholder="ex: iPhone 15 Pro">
             </div>
             <div class="col-md-6 mb-3">
@@ -117,6 +120,7 @@
                 <tr>
                     <th>Image</th>
                     <th>Nom</th>
+                    <th>Stock</th>
                     <th>Statut</th>
                     <th>Prix</th>
                     <th>Actions</th>
@@ -128,8 +132,23 @@
         </table>
     </div>
 </div>
-
+<div class="modal fade" id="restockModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header"><h6>Réapprovisionnement</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="restockId">
+                <label class="form-label small">Quantité à ajouter</label>
+                <input type="number" id="restockQty" class="form-control" value="10">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn-sm w-100" onclick="confirmRestock()">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
+    let restockModalInstance;
     // Configuration de l'URL API
     const API_BASE = 'https://smartphone-store-backend.onrender.com'.replace(/\/$/, "");
     const API_URL = `${API_BASE}/api/products`;
@@ -210,6 +229,16 @@
                             </button>
                         </div>
                     </td>
+                    <td>
+    <div class="d-flex align-items-center">
+        <span class="badge ${p.stock_actuel > 5 ? 'bg-success' : 'bg-danger'} me-2">
+            ${p.stock_actuel || 0}
+        </span>
+        <button class="btn btn-sm btn-outline-secondary p-0 px-1" onclick="openRestock(${p.id_produit})">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+</td>
                 </tr>
             `).join('');
         } catch (err) {
@@ -354,6 +383,34 @@
     };
 
     window.onload = loadProducts;
+
+function openRestock(id) {
+    document.getElementById('restockId').value = id;
+    restockModalInstance.show();
+}
+
+async function confirmRestock() {
+    const id = document.getElementById('restockId').value;
+    const qty = document.getElementById('restockQty').value;
+    const token = localStorage.getItem('userToken');
+
+    try {
+        const res = await fetch(`${API_URL}/${id}/add-stock`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ quantite: parseInt(qty) })
+        });
+
+        if (res.ok) {
+            restockModalInstance.hide();
+            loadProducts(); // Rafraîchir la liste
+        }
+    } catch (err) { alert("Erreur de mise à jour"); }
+}
+window.onload = () => {
+    loadProducts();
+    restockModalInstance = new bootstrap.Modal(document.getElementById('restockModal'));
+};
 </script>
 </body>
 </html>

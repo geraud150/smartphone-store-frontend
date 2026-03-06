@@ -1,4 +1,5 @@
 const API_BASE_URL = 'https://smartphone-store-backend.onrender.com/api';
+const STOCK_API_URL = `${API_BASE_URL}/products`;
 
 function getProductImageUrl(url) {
   const BACKEND_URL = "https://smartphone-store-backend.onrender.com";
@@ -621,6 +622,70 @@ async function deleteAccount() {
     displayMessage('Erreur', 'Erreur de connexion au serveur.', 'danger');
   }
 }
+
+async function addStockManual(productId, quantity) {
+  const token = localStorage.getItem('userToken');
+  
+  // On prépare le corps de la requête selon ce que ton serveur attend
+  const bodyData = {
+    quantite: parseInt(quantity),
+    id_utilisateur: null, // Tu pourras extraire l'ID du token plus tard si besoin
+    motif: "Réapprovisionnement manuel"
+  };
+
+  try {
+    const response = await fetch(`${STOCK_API_URL}/${productId}/add-stock`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // Optionnel selon ta config serveur
+      },
+      body: JSON.stringify(bodyData)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      displayMessage('Succès', result.message, 'success');
+      // On rafraîchit l'affichage du produit spécifique
+      refreshProductStockDisplay(productId);
+    } else {
+      displayMessage('Erreur', result.error || "Erreur de mise à jour", 'danger');
+    }
+  } catch (error) {
+    console.error("Erreur réapprovisionnement:", error);
+    displayMessage('Erreur', "Serveur injoignable", 'danger');
+  }
+}
+
+/**
+ * Récupère les infos fraîches (stock_actuel) et met à jour le DOM
+ */
+async function refreshProductStockDisplay(productId) {
+  try {
+    const response = await fetch(`${STOCK_API_URL}/${productId}/stock-info`);
+    const data = await response.json();
+
+    if (response.ok) {
+      // On cherche l'élément dans le DOM qui affiche le stock de ce produit
+      // Exemple: <span id="stock-count-12">
+      const stockBadge = document.getElementById(`stock-count-${productId}`);
+      if (stockBadge) {
+        stockBadge.textContent = data.stock_actuel;
+        
+        // Changement de couleur si seuil d'alerte atteint
+        if (data.stock_actuel <= data.seuil_alerte) {
+          stockBadge.className = "badge bg-danger";
+        } else {
+          stockBadge.className = "badge bg-success";
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Erreur rafraîchissement stock:", error);
+  }
+}
+
 
 // ==================================================================
 // INITIALISATION GLOBALE
