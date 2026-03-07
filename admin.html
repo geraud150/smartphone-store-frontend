@@ -349,12 +349,20 @@
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
-            if (res.ok) {
-                resetForm();
-                loadProducts();
-            }
-        } catch (err) { alert("Erreur enregistrement"); }
-        finally { btnSubmit.disabled = false; }
+           if (res.ok) {
+    resetForm();
+    loadProducts();
+    statusMsg.innerHTML = `<div class="alert alert-success">✅ Produit ajouté avec succès</div>`;
+} else {
+    const error = await res.json();
+    const errorMsg = error.message || `Erreur ${res.status}`;
+    statusMsg.innerHTML = `<div class="alert alert-danger">❌ ${errorMsg}</div>`;
+}
+        } catch (err) {
+            alert("Erreur enregistrement"); 
+        } finally {
+            btnSubmit.disabled = false;
+        }
     };
 
     // Gestion du Stock
