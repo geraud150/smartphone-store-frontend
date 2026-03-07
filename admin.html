@@ -207,7 +207,7 @@
         }
 
         const products = await res.json();
-            list.innerHTML = products.map(p => `
+            document.getElementById('products-list').innerHTML = products.map(p => `
                 <tr class="${p.actif === 0 ? 'archived-row' : ''}">
                     <td><img src="${getImgUrl(p.url_image)}" class="product-img-td"></td>
                     <td>
