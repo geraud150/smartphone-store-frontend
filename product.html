@@ -4,165 +4,459 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produits - Smartphone Store</title>
-    <!-- Importation de Bootstrap et Font Awesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* Styles CSS de base pour correspondre au design global */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #ffffff;
+            --surface: #ffffff;
+            --surface2: #f5f5f7;
+            --border: #e8e8e8;
+            --accent: #2563eb;
+            --accent-dim: rgba(37, 99, 235, 0.08);
+            --text: #1a1a1a;
+            --text-muted: #9ca3af;
+            --text-sub: #6b7280;
+            --shadow: 0 2px 16px rgba(0,0,0,0.07);
+            --shadow-hover: 0 10px 32px rgba(0,0,0,0.11);
+        }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            box-sizing: border-box;
-            background-color: #f8f9fa; /* secondary-color */
+            background: var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
-        :root {
-            --primary-color: #0d6efd;
+
+        /* ── NAVBAR ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
+
+        .brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .brand-dot {
+            width: 8px; height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text);
+            background: var(--surface2);
+        }
+
+        .nav-cart {
+            position: relative;
+            color: var(--text);
+            padding: 8px 14px;
+            border-radius: 20px;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-cart:hover { background: var(--surface2); }
+
+        .cart-badge {
+            position: absolute;
+            top: 2px; right: 2px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-login {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            margin-left: 8px;
+        }
+
+        .btn-login:hover { opacity: 0.85; }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            background: var(--surface2);
+            padding: 52px 40px 44px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 10px;
+        }
+
+        .page-header h1 span { color: var(--accent); }
+
+        .page-header p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+
+        /* ── MAIN CONTENT ── */
         .main-content {
             flex-grow: 1;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 48px 40px 80px;
         }
+
+        /* ── FILTERS ── */
+        .filters-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filters-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-right: 4px;
+        }
+
+        .filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            color: var(--text-sub);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 8px 18px;
+            border-radius: 22px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .filter-btn i { font-size: 0.75rem; }
+
+        /* ── PRODUCT GRID ── */
+        #productContainer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        /* ── PRODUCT CARD ── */
         .product-card {
-            border-radius: 0.75rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden; /* Assure que l'image est bien contenue */
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
+
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.15);
+            border-color: #d0d0d0;
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
         }
+
         .product-card img {
-            height: 250px;
-            object-fit: cover;
-            border-top-left-radius: 0.75rem;
-            border-top-right-radius: 0.75rem;
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            padding: 24px;
+            background: var(--surface2);
+            display: block;
+            transition: transform 0.4s ease;
         }
+
+        .product-card:hover img { transform: scale(1.05); }
+
+        .card-body {
+            padding: 18px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
         .product-title {
-            font-weight: bold;
-            color: #343a40;
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text);
+            margin-bottom: 4px;
         }
+
+        .card-desc {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-bottom: 14px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .card-specs {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .spec-pill {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .spec-pill i { color: var(--accent); font-size: 0.62rem; }
+
+        .card-footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            border-top: 1.5px solid var(--border);
+            margin-top: auto;
+        }
+
         .product-price {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            font-weight: bold;
+            font-family: 'Syne', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
         }
+
+        .btn-add-to-cart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px; height: 38px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            transition: all 0.22s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 3px 12px rgba(37,99,235,0.22);
+        }
+
+        .btn-add-to-cart:hover {
+            transform: scale(1.12);
+            box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+        }
+
+        /* ── LOADING ── */
+        #loadingMessage {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            width: 36px; height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 14px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #loadingMessage p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ── MESSAGE CONTAINER ── */
+        #messageContainer {
+            position: fixed;
+            top: 80px; right: 20px;
+            z-index: 1050;
+            min-width: 280px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--surface2);
+            border-top: 1px solid var(--border);
+            padding: 32px 40px;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 0.8rem;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .product-card { animation: fadeUp 0.45s ease both; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1100px) { #productContainer { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 800px)  { #productContainer { grid-template-columns: repeat(2, 1fr); } nav { padding: 0 20px; } .main-content { padding: 32px 20px 60px; } .page-header { padding: 40px 24px 32px; } }
+        @media (max-width: 480px)  { #productContainer { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <!-- Barre de navigation (Identique aux autres pages) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="index.html"><i class="fas fa-mobile-alt me-2"></i>Smartphone Store</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="product.html">Produits</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cart.html">
-                            <i class="fas fa-shopping-cart me-1"></i>Panier
-                            <span class="badge bg-danger rounded-pill" id="cartBadge">0</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="orders.html">
-                            <i class="fas fa-box me-1"></i>Mes Commandes
-                        </a>
-                    </li>
-                   <li class="nav-item">
-    <a class="nav-link" href="#" id="loginLink">
-         <i class="fas fa-sign-in-alt me-1"></i>Connexion
-    </a>
-</li>
-                </ul>
-            </div>
-        </div>
+    <!-- NAVBAR -->
+    <nav>
+        <a class="brand" href="index.html">
+            <span class="brand-dot"></span>Smartphone Store
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="product.html" class="active">Produits</a></li>
+            <li>
+                <a href="cart.html" class="nav-cart">
+                    <i class="fas fa-bag-shopping"></i>
+                    <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+                </a>
+            </li>
+            <li><a href="orders.html"><i class="fas fa-box"></i> Commandes</a></li>
+            <li id="authSection">
+                <a id="loginLink" class="btn-login" href="login.html">Connexion</a>
+            </li>
+        </ul>
     </nav>
 
-    <!-- Contenu Principal - Catalogue des Produits -->
-    <div class="container main-content">
-        <h1 class="mb-5 text-center fw-bold">Notre Catalogue de Smartphones</h1>
- <h1 class="mb-4 text-center">Catalogue de Produits</h1>
-        
-        <!-- NOUVELLE SECTION DE FILTRAGE PAR CATÉGORIE -->
-        <div class="text-center mb-5">
-            <div class="btn-group shadow-sm" role="group" aria-label="Filtre de catégories">
-                <!-- 'all' filtre affichera tous les produits. Ce bouton est actif par défaut -->
-                <button type="button" class="btn btn-outline-primary filter-button active" 
-                        data-category="all" onclick="setCategoryFilter('all', this)">
-                    <i class="fas fa-th-large me-2"></i>Tous les produits
-                </button>
-                
-                <button type="button" class="btn btn-outline-primary filter-button" 
-                        data-category="smartphone" onclick="setCategoryFilter('smartphone', this)">
-                    <i class="fas fa-mobile-alt me-2"></i>Smartphones
-                </button>
-                
-                <button type="button" class="btn btn-outline-primary filter-button" 
-                        data-category="ordinateur portable" onclick="setCategoryFilter('ordinateur portable', this)">
-                    <i class="fas fa-laptop me-2"></i>Ordinateurs Portables
-                </button>
-            </div>
-        </div>
-        <!-- FIN NOUVELLE SECTION -->
-        <!-- Conteneur pour les messages -->
-        <div id="messageContainer" class="container mb-4"></div>
+    <div id="messageContainer"></div>
 
-        <!-- Début du bloc dynamique -->
-        <div id="productContainer" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            
-            <!-- Message de chargement visible tant que le JS n'a pas pris le relais -->
-            <div class="col-12 text-center my-5" id="loadingMessage">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Chargement des produits...</span>
-                </div>
-                <p class="mt-2 text-muted">Chargement du catalogue...</p>
-            </div>
-            
-            <!-- Les cartes de produits de la DB seront injectées ici par main.js -->
-        </div>
-        <!-- Fin du bloc dynamique -->
-        
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1>Notre <span>catalogue</span></h1>
+        <p>Tous nos smartphones sélectionnés pour vous</p>
     </div>
 
-    <!-- Footer (Identique aux autres pages) -->
-    <footer class="footer bg-dark text-light py-3 mt-auto">
-        <div class="container text-center">
-            <p>&copy; 2024 Smartphone Store. Tous droits réservés.</p>
+    <!-- MAIN -->
+    <div class="main-content">
+
+        <!-- FILTRES -->
+        <div class="filters-bar">
+            <span class="filters-label">Filtrer</span>
+            <button class="filter-btn active" data-category="all" onclick="setCategoryFilter('all', this)">
+                <i class="fas fa-th-large"></i> Tous
+            </button>
+            <button class="filter-btn" data-category="smartphone" onclick="setCategoryFilter('smartphone', this)">
+                <i class="fas fa-mobile-alt"></i> Smartphones
+            </button>
+            <button class="filter-btn" data-category="ordinateur portable" onclick="setCategoryFilter('ordinateur portable', this)">
+                <i class="fas fa-laptop"></i> Ordinateurs
+            </button>
         </div>
+
+        <!-- PRODUITS -->
+        <div id="productContainer">
+            <div id="loadingMessage">
+                <div class="spinner"></div>
+                <p>Chargement du catalogue...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 Smartphone Store — Tous droits réservés.</p>
     </footer>
 
-    <!-- Scripts Bootstrap et Logique -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/JS/main.js"></script>
-    
-    <!-- Script de mise à jour des liens d'authentification (ce bloc est facultatif si main.js appelle déjà initApp) -->
-    <script>
-        // Ce bloc de script est maintenant superflu si vous avez utilisé le nouveau main.js
-        // qui appelle document.addEventListener('DOMContentLoaded', initApp);
-        // Vous pouvez le supprimer si vous le souhaitez, mais il ne causera pas d'erreur.
-        /*
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof updateAuthLinks === 'function') {
-                 updateAuthLinks();
-            }
-        });
-        */
-    </script>
+    <script src="./JS/main.js"></script>
 </body>
 </html>
-
-

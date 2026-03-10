@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement - Smartphone Store</title>
+    <!-- Importation de Bootstrap et Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        :root {
+            --primary-color: #0d6efd;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .card {
+            border-radius: 0.75rem;
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        }
+        .order-summary-item {
+            font-size: 0.95rem;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-mobile-alt me-2"></i>Smartphone Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="product.html">Produits</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i>Panier 
+                            <span class="badge bg-danger rounded-pill" id="cartBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="orders.html"><i class="fas fa-box me-1"></i>Mes Commandes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html" id="loginLink"><i class="fas fa-sign-in-alt me-1"></i>Connexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <div class="container main-content fade-in">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold">Finaliser la commande</h1>
+                <p class="text-muted">Plus qu'une étape pour recevoir votre nouveau smartphone.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Formulaire de Livraison et Paiement -->
+            <div class="col-lg-8">
+                <div class="card p-4 mb-4">
+                    <h4 class="mb-4"><i class="fas fa-truck me-2 text-primary"></i>Informations de livraison</h4>
+                    <form id="checkoutForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Adresse de livraison</label>
+                                <input type="text" class="form-control" id="address" placeholder="Rue, numéro, appartement..." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="city" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="zipCode" class="form-label">Code Postal</label>
+                                <input type="text" class="form-control" id="zipCode" required>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h4 class="mb-4"><i class="fas fa-credit-card me-2 text-primary"></i>Paiement sécurisé</h4>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-check border p-3 rounded mb-2">
+                                    <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="cardPay" checked>
+                                    <label class="form-check-label fw-bold" for="cardPay">
+                                        <i class="fab fa-cc-visa me-1"></i> <i class="fab fa-cc-mastercard me-2"></i> Carte Bancaire
+                                    </label>
+                                </div>
+                                <div class="form-check border p-3 rounded">
+                                    <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="paypalPay">
+                                    <label class="form-check-label fw-bold" for="paypalPay">
+                                        <i class="fab fa-paypal me-2"></i> PayPal
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Résumé à droite -->
+            <div class="col-lg-4">
+                <div class="card p-4 sticky-top" style="top: 2rem;">
+                    <h4 class="mb-3">Résumé</h4>
+                    <div id="orderItemsList">
+                        <!-- Rempli par JS -->
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sous-total</span>
+                        <span id="summarySubtotal">0.00 €</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Livraison</span>
+                        <span>Gratuit</span>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold fs-5 mt-3 border-top pt-3">
+                        <span>Total</span>
+                        <span class="text-primary" id="summaryTotal">0.00 €</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary btn-lg w-100 mt-4" id="btnConfirm">
+                        Confirmer le paiement
+                    </button>
+                    <div class="text-center mt-3">
+                        <small class="text-muted"><i class="fas fa-lock me-1"></i> Transaction sécurisée SSL</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer bg-dark text-light py-3 mt-auto">
+        <div class="container text-center">
+            <p>&copy; 2024 Smartphone Store. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="./JS/main.js"></script> 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof updateAuthLinks === 'function') updateAuthLinks();
+            if (typeof updateCartBadge === 'function') updateCartBadge();
+            loadCheckoutSummary();
+
+            const btnConfirm = document.getElementById('btnConfirm');
+            if (btnConfirm) {
+                btnConfirm.addEventListener('click', confirmOrder);
+            }
+        });
+
+        function loadCheckoutSummary() {
+            const cart = JSON.parse(localStorage.getItem('shoppingCart') || localStorage.getItem('cart') || '[]');
+            const summaryList = document.getElementById('orderItemsList');
+            const subtotalEl = document.getElementById('summarySubtotal');
+            const totalEl = document.getElementById('summaryTotal');
+            const badgeEl = document.getElementById('cartBadge');
+
+            let total = 0;
+            let totalItems = 0;
+
+            if (!summaryList) return; // Sécurité si l'élément n'existe pas
+
+            if (cart.length === 0) {
+                summaryList.innerHTML = '<p class="text-muted text-center">Votre panier est vide.</p>';
+                return;
+            }
+
+            summaryList.innerHTML = '';
+            cart.forEach(item => {
+                const qty = item.quantity || 0;
+                const itemTotal = (item.price || 0) * qty;
+                totalItems += qty;
+                total += itemTotal;
+                summaryList.innerHTML += `
+                    <div class="d-flex justify-content-between order-summary-item mb-2">
+                        <span class="text-truncate" style="max-width: 200px;">${item.name} x${item.quantity}</span>
+                        <span class="fw-bold">${itemTotal.toFixed(2)} €</span>
+                    </div>
+                `;
+            });
+
+            if (subtotalEl) subtotalEl.innerText = total.toFixed(2) + ' €';
+            if (totalEl) totalEl.innerText = total.toFixed(2) + ' €';
+            if (badgeEl) badgeEl.innerText = totalItems;
+        }
+
+        async function confirmOrder() {
+            const form = document.getElementById('checkoutForm');
+            const token = localStorage.getItem('userToken');
+            const cart = JSON.parse(localStorage.getItem('shoppingCart') || localStorage.getItem('cart') || '[]');
+            const btn = document.getElementById('btnConfirm');
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            if (cart.length === 0) {
+                alert("Votre panier est vide.");
+                return;
+            }
+
+            if (!token) {
+                alert("Veuillez vous connecter pour finaliser l'achat.");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const orderData = {
+                prenom: document.getElementById('firstName').value,
+                nom: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                adresse_livraison: document.getElementById('address').value,
+                ville: document.getElementById('city').value,
+                code_postal: document.getElementById('zipCode').value,
+                mode_paiement: document.querySelector('input[name="paymentMethod"]:checked').id === 'cardPay' ? 'Carte Bancaire' : 'PayPal',
+                items: cart.map(item => ({
+                    product_id: item.id || item.id_produit,
+                    quantity: item.quantity,
+                    price_at_order: item.price
+                }))
+            };
+
+            try {
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Traitement...';
+
+                const response = await fetch('https://smartphone-store-backend.onrender.com/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.removeItem('shoppingCart');
+                    alert('Commande validée avec succès !');
+                    window.location.href = 'orders.html'; 
+                } else {
+                    alert('Erreur lors de la commande : ' + (result.message || result.error));
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+
+            } catch (error) {
+                console.error('Erreur réseau:', error);
+                alert('Le serveur est injoignable. Veuillez réessayer plus tard.');
+                btn.disabled = false;
+                btn.innerHTML = 'Confirmer le paiement';
+            }
+        }
+        
+    
+    </script>
+</body>
+</html>

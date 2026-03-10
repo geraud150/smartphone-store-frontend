@@ -23,18 +23,26 @@
             padding: 2rem 0;
         }
         .order-card {
-            margin-bottom: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 2rem;
+            border-radius: 0.75rem;
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+            background: white;
+            overflow: hidden;
         }
         .order-header {
-            background-color: #f8f9fa;
+            background-color: #f1f3f5;
             border-bottom: 1px solid #dee2e6;
-            padding: 1rem;
-            border-radius: 0.5rem 0.5rem 0 0;
+            padding: 1rem 1.5rem;
+        }
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
         }
         .product-item {
-            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f3f5;
         }
         .product-item:last-child {
             border-bottom: none;
@@ -45,36 +53,22 @@
     <!-- Barre de navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-mobile-alt me-2"></i>Smartphone Store
-            </a>
+            <a class="navbar-brand" href="index.html"><i class="fas fa-mobile-alt me-2"></i>Smartphone Store</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="product.html">Produits</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="product.html">Produits</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="cart.html">
                             <i class="fas fa-shopping-cart me-1"></i>Panier
                             <span class="badge bg-danger rounded-pill" id="cartBadge">0</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="orders.html">
-                            <i class="fas fa-box me-1"></i>Mes Commandes
-                        </a>
-                   <li class="nav-item">
-    <a class="nav-link" href="#" id="loginLink">
-         <i class="fas fa-sign-in-alt me-1"></i>Connexion
-    </a>
-</li>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="orders.html"><i class="fas fa-box me-1"></i>Mes Commandes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html" id="loginLink"><i class="fas fa-sign-in-alt me-1"></i>Connexion</a></li>
                 </ul>
             </div>
         </div>
@@ -82,40 +76,133 @@
 
     <!-- Contenu Principal -->
     <div class="container main-content">
-        <h1 class="mb-4">Mes Commandes</h1>
-        <div id="messageContainer" class="mb-4"></div>
+        <h1 class="mb-4 fw-bold">Mes Commandes</h1>
         
         <!-- Message de chargement -->
         <div id="loadingMessage" class="text-center my-5">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Chargement...</span>
-            </div>
-            <p class="mt-2">Chargement de vos commandes...</p>
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Récupération de vos commandes depuis le serveur...</p>
         </div>
 
         <!-- Conteneur pour les commandes -->
-        <div id="ordersContainer">
-            <!-- Les commandes seront injectées ici par le JavaScript -->
-        </div>
+        <div id="ordersContainer"></div>
 
         <!-- Message si aucune commande -->
         <div id="noOrdersMessage" class="text-center my-5" style="display: none;">
             <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
-            <h4 class="text-muted">Vous n'avez pas encore de commandes.</h4>
-            <p>Découvrez nos produits et passez votre première commande !</p>
-            <a href="product.html" class="btn btn-primary mt-3">Voir les produits</a>
+            <h4 class="text-muted">Aucune commande trouvée.</h4>
+            <p>Il semblerait que vous n'ayez pas encore passé commande.</p>
+            <a href="product.html" class="btn btn-primary mt-3">Découvrir nos produits</a>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer bg-dark text-light py-3 mt-auto">
         <div class="container text-center">
             <p>&copy; 2024 Smartphone Store. Tous droits réservés.</p>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/JS/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="./JS/main.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof updateAuthLinks === 'function') updateAuthLinks();
+    if (typeof updateCartBadge === 'function') updateCartBadge();
+    fetchUserOrders();
+  });
+
+
+        async function fetchUserOrders() {
+            const token = localStorage.getItem('userToken');
+            const ordersContainer = document.getElementById('ordersContainer');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const noOrdersMessage = document.getElementById('noOrdersMessage');
+
+            if (!token) {
+                loadingMessage.style.display = 'none';
+                ordersContainer.innerHTML = `
+                    <div class="alert alert-warning text-center">
+                        Veuillez vous <a href="login.html" class="alert-link">connecter</a> pour voir vos commandes.
+                    </div>`;
+                return;
+            }
+
+            try {
+                // Appel à l'API pour récupérer les commandes de l'utilisateur
+                // Note : Vous devrez créer cet endpoint GET /api/orders côté serveur
+                const response = await fetch('https://smartphone-store-backend.onrender.com/api/orders', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Erreur lors du chargement');
+
+                const orders = await response.json();
+                loadingMessage.style.display = 'none';
+
+                if (orders.length === 0) {
+                    noOrdersMessage.style.display = 'block';
+                    return;
+                }
+
+                // Génération du HTML pour chaque commande
+                orders.forEach(order => {
+                    const date = new Date(order.date_commande).toLocaleDateString('fr-FR', {
+                        day: 'numeric', month: 'long', year: 'numeric'
+                    });
+
+                    const orderHtml = `
+                        <div class="order-card card">
+                            <div class="order-header d-flex justify-content-between align-items-center flex-wrap">
+                                <div>
+                                    <span class="text-muted text-uppercase small fw-bold">Commande n°${order.id_commande}</span>
+                                    <h5 class="mb-0 mt-1">Passée le ${date}</h5>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary status-badge mb-1">${order.statut}</span>
+                                    <div class="fw-bold text-primary fs-5">${parseFloat(order.montant_total).toFixed(2)} €</div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="p-3 border-bottom bg-light small d-flex justify-content-between">
+                                    <span><strong>Livré à :</strong> ${order.prenom} ${order.nom}, ${order.adresse_livraison}, ${order.ville}</span>
+                                    <span><strong>Paiement :</strong> ${order.statut_paiement} (${order.mode_paiement})</span>
+                                </div>
+                                <div id="items-container-${order.id_commande}">
+                                    <div class="p-3 text-center"><small class="text-muted">Chargement des articles...</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    ordersContainer.innerHTML += orderHtml;
+                    
+                    // Une fois la carte affichée, on peut charger ses détails si l'API les renvoie
+                    renderOrderItems(order.id_commande, order.details);
+                });
+
+            } catch (error) {
+                loadingMessage.style.display = 'none';
+                ordersContainer.innerHTML = `<div class="alert alert-danger">Impossible de charger les commandes. Vérifiez que votre serveur est lancé.</div>`;
+            }
+        }
+
+        function renderOrderItems(orderId, items) {
+            const container = document.getElementById(`items-container-${orderId}`);
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div class="p-3">Aucun détail disponible.</div>';
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="product-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">${item.nom_produit || 'Produit'}</h6>
+                        <small class="text-muted">Quantité : ${item.quantite}</small>
+                    </div>
+                    <div class="fw-bold">${parseFloat(item.prix_a_la_commande).toFixed(2)} €</div>
+                </div>
+            `).join('');
+        }
+    </script>
 </body>
 </html>

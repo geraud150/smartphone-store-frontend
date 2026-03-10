@@ -247,34 +247,32 @@ function renderProducts() {
     container.innerHTML = '<p class="col-12 text-center text-muted mt-5">Aucun produit trouvé dans cette catégorie.</p>';
   } else {
     container.innerHTML = filteredProducts.map(product => `
-      <div class="col">
-        <div class="card h-100 shadow-sm">
-          <img src="${product.image}" class="card-img-top" alt="${product.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e9ecef/212529?text=Image+Non+Trouvée';">
-          <div class="card-body d-flex flex-column">
-            <h4 class="card-title text-primary">${product.name}</h4>
-            <span class="badge bg-secondary mb-2">${product.category.toUpperCase()}</span>
-            <p class="card-text text-muted small">${product.description.substring(0, 100)}...</p>
-            
-            <ul class="list-unstyled small mt-2">
-              <li><i class="fas fa-memory me-2"></i>RAM: ${product.specs.ram || 'N/A'}</li>
-              <li><i class="fas fa-database me-2"></i>Stockage: ${product.specs.storage || 'N/A'}</li>
-            </ul>
-            
-            <div class="mt-auto pt-3 border-top">
-              <p class="fw-bold fs-5 mb-2">${product.price.toFixed(2)} €</p>
-              <button class="btn btn-primary w-100" onclick="addToCart(${product.id})">
-                <i class="fas fa-cart-plus me-2"></i>Ajouter au panier
-              </button>
+      <div class="product-card">
+                <img src="${product.image}" class="card-img" alt="${product.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e9ecef/212529?text=Image+Non+Trouvée';">
+                <div class="card-body">
+                    <p class="card-tag">${product.category}</p>
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="card-desc">${product.description.substring(0, 100)}...</p>
+                    
+                    <div class="card-specs">
+                        <span class="spec-pill"><i class="fas fa-microchip"></i>${product.specs.ram || 'N/A'}</span>
+                        <span class="spec-pill"><i class="fas fa-hard-drive"></i>${product.specs.storage || 'N/A'}</span>
+                    </div>
+                    
+                    <div class="card-footer-row">
+                        <span class="product-price">${product.price.toFixed(2)} €</span>
+                        <button class="btn-add-to-cart" onclick="addToCart(${product.id})">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
+        `).join('');
+    }
 
-  if (container) container.style.display = 'flex';
+
+    if (container) container.style.display = 'grid';
 }
-
 function setCategoryFilter(category, clickedButton) {
   currentCategoryFilter = category;
 
@@ -368,56 +366,44 @@ function removeItem(productId) {
 }
 
 async function handleCheckout() {
-  const cart = getCart();
-  const token = localStorage.getItem('userToken');
+    // 1. Selection du bouton grace a son attribut onclick existant
+    const checkoutBtn = document.querySelector('button[onclick="handleCheckout()"]');
+    
+    // 2. Recuperation des donnees (on teste les cles communes de LocalStorage)
+    const rawCart = localStorage.getItem('shoppingCart') || localStorage.getItem('cart') || '[]';
+    const cartData = JSON.parse(rawCart);
+    const token = localStorage.getItem('userToken');
+    
+    // 3. Verification si le panier est vide
+    if (!cartData || cartData.length === 0) {
+        displayMessage("Erreur", "Votre panier est vide !", "danger");
+        return;
+    }
 
-  if (cart.length === 0) {
-    displayMessage('Erreur', "Votre panier est vide.", 'danger');
-    return;
-  }
-
-  if (!token) {
+     if (!token) {
     displayMessage('Erreur', "Vous devez être connecté pour passer commande.", 'danger');
     setTimeout(() => window.location.href = 'login.html', 2000);
     return;
   }
 
-  const items = cart.map(item => ({
-    product_id: item.id,
-    quantity: item.quantity,
-    price_at_order: item.price
-  }));
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/orders`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ items: items })
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      localStorage.removeItem('shoppingCart');
-      updateCartBadge();
-
-      displayMessage('Commande Validée', `Votre commande #${result.orderId} a été enregistrée avec succès !`, 'success');
-
-      setTimeout(() => {
-        window.location.href = 'orders.html';
-      }, 2000);
-    } else {
-      displayMessage('Erreur de Commande', result.message || "Une erreur est survenue lors de l'enregistrement de la commande.", 'danger');
+    // 4. Interface : desactiver le bouton pour eviter les doubles clics
+    const originalContent = checkoutBtn ? checkoutBtn.innerHTML : "";
+    if (checkoutBtn) {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Redirection...`;
     }
-  } catch (error) {
-    console.error('Erreur réseau lors du paiement:', error);
-    displayMessage('Erreur Réseau', "Impossible de communiquer avec le serveur pour finaliser la commande.", 'danger');
-  }
-}
 
+    // 5. Aller a la page de paiement sans vider le panier
+    window.location.href = "checkout.html";
+
+    // Si pour une raison quelconque la redirection est bloquee, on reactive le bouton
+    setTimeout(() => {
+        if (checkoutBtn) {
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerHTML = originalContent;
+        }
+    }, 1500);
+}
 function renderCart() {
   const cart = getCart();
   const cartTableBody = document.getElementById('cartTableBody');
@@ -445,33 +431,41 @@ function renderCart() {
     const itemTotal = item.price * item.quantity;
     total += itemTotal;
     return `
-      <tr>
-        <td>
-          <div class="d-flex align-items-center">
-            <img src="${item.image}" alt="${item.name}"
-                 style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;"
-                 class="me-3"
-                 onerror="this.src='https://placehold.co/60x60/e9ecef/212529?text=IMG';">
-            <div>
-              <h6 class="mb-0">${item.name}</h6>
-            </div>
-          </div>
-        </td>
-        <td>${item.price.toFixed(2)} €</td>
-        <td>
-          <div class="input-group" style="width: 130px;">
-            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${item.id}, -1)">-</button>
-            <input type="text" class="form-control form-control-sm text-center" value="${item.quantity}" readonly>
-            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQuantity(${item.id}, 1)">+</button>
-          </div>
-        </td>
-        <td class="fw-bold">${itemTotal.toFixed(2)} €</td>
-        <td>
-          <button class="btn btn-sm btn-danger" onclick="removeItem(${item.id})">
-            <i class="fas fa-trash-alt"></i>
-          </button>
-        </td>
-      </tr>
+       <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="${item.image}" alt="${item.name}" 
+                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;" 
+                             onerror="this.src='https://placehold.co/60x60/e9ecef/212529?text=IMG';">
+                        <div>
+                            <h6 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: #1a1a1a;">${item.name}</h6>
+                        </div>
+                    </div>
+                </td>
+                <td style="color: #6b7280;">${item.price.toFixed(2)} €</td>
+                <td>
+                    <div style="display: flex; gap: 6px; width: 130px;">
+                        <button style="flex: 1; padding: 6px 8px; border: 1.5px solid #e8e8e8; background: white; border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: #6b7280; transition: all 0.2s; font-weight: 600;" 
+                                onmouseover="this.style.borderColor='#2563eb'; this.style.color='#2563eb'; this.style.background='#f5f5f7';" 
+                                onmouseout="this.style.borderColor='#e8e8e8'; this.style.color='#6b7280'; this.style.background='white';" 
+                                type="button" onclick="changeQuantity(${item.id}, -1)">−</button>
+                        <input type="text" style="flex: 1; text-align: center; border: 1.5px solid #e8e8e8; border-radius: 8px; padding: 6px 4px; font-size: 0.9rem; background: white; color: #1a1a1a;" value="${item.quantity}" readonly>
+                        <button style="flex: 1; padding: 6px 8px; border: 1.5px solid #e8e8e8; background: white; border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: #6b7280; transition: all 0.2s; font-weight: 600;" 
+                                onmouseover="this.style.borderColor='#2563eb'; this.style.color='#2563eb'; this.style.background='#f5f5f7';" 
+                                onmouseout="this.style.borderColor='#e8e8e8'; this.style.color='#6b7280'; this.style.background='white';" 
+                                type="button" onclick="changeQuantity(${item.id}, 1)">+</button>
+                    </div>
+                </td>
+                <td style="font-weight: 700; color: #1a1a1a;">${itemTotal.toFixed(2)} €</td>
+                <td>
+                    <button style="width: 36px; height: 36px; border: none; background: #dc2626; color: white; border-radius: 10px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);" 
+                            onmouseover="this.style.backgroundColor='#b91c1c'; this.style.boxShadow='0 4px 12px rgba(220, 38, 38, 0.3)';" 
+                            onmouseout="this.style.backgroundColor='#dc2626'; this.style.boxShadow='0 2px 8px rgba(220, 38, 38, 0.2)';" 
+                            onclick="removeItem(${item.id})">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
     `;
   }).join('');
 
@@ -703,7 +697,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCart();
   }
 
-  if (document.getElementById('ordersContainer')) {
+  if (document.getElementById('ordersContainer') && typeof fetchUserOrders !== 'function') {
     loadOrders();
   }
 
