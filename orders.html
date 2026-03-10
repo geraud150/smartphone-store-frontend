@@ -461,20 +461,28 @@
                 return;
             }
 
-            container.innerHTML = items.map(item => `
-                <div class="product-item">
-                    <div class="product-item-left">
-                        <img src="${item.url_image || 'https://placehold.co/56x56/f5f5f7/9ca3af?text=IMG'}"
-                             alt="${item.nom_produit || 'Produit'}"
-                             onerror="this.src='https://placehold.co/56x56/f5f5f7/9ca3af?text=IMG'">
-                        <div>
-                            <h6>${item.nom_produit || 'Produit'}</h6>
-                            <small>Quantité : ${item.quantite}</small>
-                        </div>
-                    </div>
-                    <div class="product-item-price">${parseFloat(item.prix_a_la_commande).toFixed(2)} €</div>
+           container.innerHTML = items.map(item => {
+    const BACKEND_URL = 'https://smartphone-store-backend.onrender.com';
+    const imgUrl = item.url_image
+        ? (item.url_image.startsWith('/uploads') ? BACKEND_URL + item.url_image : item.url_image)
+        : 'https://placehold.co/56x56/f5f5f7/9ca3af?text=IMG';
+
+    return `
+        <div class="product-item">
+            <div class="product-item-left">
+                <img src="${imgUrl}"
+                     alt="${item.nom_produit || 'Produit'}"
+                     onerror="this.src='https://placehold.co/56x56/f5f5f7/9ca3af?text=IMG'">
+                <div>
+                    <h6>${item.nom_produit || 'Produit'}</h6>
+                    <small>Quantité : ${item.quantite}</small>
                 </div>
-            `).join('');
+            </div>
+            <div class="product-item-price">${parseFloat(item.prix_a_la_commande).toFixed(2)} €</div>
+        </div>
+    `;
+}).join('');
+
         }
     </script>
 </body>
