@@ -252,7 +252,7 @@
                 adresse_livraison: document.getElementById('address').value,
                 ville: document.getElementById('city').value,
                 code_postal: document.getElementById('zipCode').value,
-                mode_paiement: document.querySelector('input[name="paymentMethod"]:checked').id === 'cardPay' ? 'Carte Bancaire' : 'PayPal',
+                mode_paiement: document.querySelector('input[name="paymentMethod"]:checked').id === 'cardPay' ? 'Carte_bleue' : 'paypal',
                 items: cart.map(item => ({
                     product_id: item.id || item.id_produit,
                     quantity: item.quantity,
