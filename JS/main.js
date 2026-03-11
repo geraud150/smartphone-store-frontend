@@ -252,10 +252,10 @@ function renderProducts() {
                 <img src="${product.image}" class="card-img" alt="${product.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e9ecef/212529?text=Image+Non+Trouvée';">
                 <div class="card-body">
                     <p class="card-tag">${product.category}</p>
-                    <h3 class="product-title">${product.name}</h3>
+                    <h3 class="product-title">
                     <a href="product-detail.html?id=${product.id}" class="text-decoration-none text-primary fw-bold">
-                                ${product.name}
-                            </a>
+                    ${product.name}</a>
+                    </h3>
                     <p class="card-desc">${product.description.substring(0, 100)}...</p>
                     
                     <div class="card-specs">
