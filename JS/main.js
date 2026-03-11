@@ -248,10 +248,14 @@ function renderProducts() {
   } else {
     container.innerHTML = filteredProducts.map(product => `
       <div class="product-card">
+      <a href="product-detail.html?id=${product.id}">
                 <img src="${product.image}" class="card-img" alt="${product.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e9ecef/212529?text=Image+Non+Trouvée';">
                 <div class="card-body">
                     <p class="card-tag">${product.category}</p>
                     <h3 class="product-title">${product.name}</h3>
+                    <a href="product-detail.html?id=${product.id}" class="text-decoration-none text-primary fw-bold">
+                                ${product.name}
+                            </a>
                     <p class="card-desc">${product.description.substring(0, 100)}...</p>
                     
                     <div class="card-specs">
@@ -428,7 +432,7 @@ function renderCart() {
   let total = 0;
 
   cartTableBody.innerHTML = cart.map(item => {
-    const itemTotal = item.price * item.quantity;
+    const itemTotal = parseFloat(item.price) * item.quantity;
     total += itemTotal;
     return `
        <tr>
@@ -442,7 +446,7 @@ function renderCart() {
                         </div>
                     </div>
                 </td>
-                <td style="color: #6b7280;">${item.price.toFixed(2)} €</td>
+                <td style="color: #6b7280;">${parseFloat(item.price).toFixed(2)} €</td>
                 <td>
                     <div style="display: flex; gap: 6px; width: 130px;">
                         <button style="flex: 1; padding: 6px 8px; border: 1.5px solid #e8e8e8; background: white; border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: #6b7280; transition: all 0.2s; font-weight: 600;" 

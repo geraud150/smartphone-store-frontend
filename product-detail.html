@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Produit - Smartphone Store</title>
+    <!-- Importation de Bootstrap et Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        :root {
+            --primary-color: #0d6efd;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        /* Style spécifique aux détails */
+        .product-image-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 400px;
+        }
+        .product-image-card img {
+            max-width: 100%;
+            max-height: 450px;
+            object-fit: contain;
+        }
+        .price-tag {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-weight: 800;
+        }
+        .stock-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+        }
+        .description-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border-left: 5px solid var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barre de navigation (Identique à votre index/product) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-mobile-alt me-2"></i>Smartphone Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="product.html">Produits</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i>Panier
+                            <span class="badge bg-danger rounded-pill" id="cartBadge">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="orders.html"><i class="fas fa-box me-1"></i>Mes Commandes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="loginLink"><i class="fas fa-sign-in-alt me-1"></i>Connexion</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <!-- Message de chargement -->
+        <div id="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-3">Chargement des informations du produit...</p>
+        </div>
+
+        <!-- Contenu du produit -->
+        <div id="product-details" class="row g-5 d-none">
+            <!-- Colonne Gauche : Image -->
+            <div class="col-md-6">
+                <div class="product-image-card shadow-sm border text-center">
+                    <img id="p-image" src="" alt="Image produit">
+                </div>
+            </div>
+
+            <!-- Colonne Droite : Infos -->
+            <div class="col-md-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="product.html">Catalogue</a></li>
+                        <li class="breadcrumb-item active" id="p-category-breadcrumb">Smartphone</li>
+                    </ol>
+                </nav>
+
+                <h1 id="p-title" class="display-5 fw-bold mb-3">Nom du Smartphone</h1>
+                
+                <div class="mb-4">
+                    <span id="p-stock-badge" class="stock-badge bg-success-subtle text-success fw-bold">En stock</span>
+                </div>
+
+                <div class="price-tag mb-4"><span id="p-price">0.00</span>€</div>
+
+                <div class="description-box mb-5">
+                    <h5 class="fw-bold"><i class="fas fa-info-circle me-2"></i>Description</h5>
+                    <p id="p-description" class="text-muted mb-0">Chargement de la description...</p>
+                </div>
+
+                <!-- Actions -->
+                <div class="card p-4 shadow-sm">
+                    <div class="row g-3">
+                        <div class="col-sm-4">
+                            <label class="form-label small fw-bold text-uppercase text-muted">Quantité</label>
+                            <select id="p-quantity" class="form-select border-primary-subtle">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8 d-flex align-items-end">
+                            <button id="add-btn" class="btn btn-primary btn-lg w-100 fw-bold py-3 shadow">
+                                <i class="fas fa-cart-plus me-2"></i>Ajouter au panier
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-4 mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Smartphone Store. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="JS/main.js"></script>
+    <script>
+        const API_URL = "https://smartphone-store-backend.onrender.com/api"; 
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Gérer l'affichage de la Navigation (comme dans votre index)
+            updateAuthDisplay();
+            updateCartBadge();
+
+            // 2. Récupérer l'ID dans l'URL (?id=7)
+           const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+
+    if (productId) {
+        fetchProductDetails(productId);
+    } else {
+        // Si aucun ID n'est fourni, on redirige vers le catalogue
+        window.location.href = 'product.html';
+    }
+});
+
+/**
+ * Récupère les données d'un produit spécifique depuis l'API
+ */
+async function fetchProductDetails(id) {
+    try {
+        // Appelle la route GET /api/products/:id de votre server.js
+        const response = await fetch(`${API_URL}/products/${id}`);
+        
+        if (!response.ok) {
+            throw new Error("Produit introuvable");
+        }
+        
+        const product = await response.json();
+        renderProductData(product);
+        
+    } catch (err) {
+        console.error("Erreur lors du chargement:", err);
+        document.getElementById('loading').innerHTML = `
+            <div class="alert alert-danger shadow-sm">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                Impossible de charger les détails du produit. Veuillez vérifier votre connexion au serveur.
+            </div>`;
+    }
+}
+
+/**
+ * Injecte les données du produit dans le DOM
+ */
+function renderProductData(p) {
+    // Mapping avec les colonnes de votre base de données MySQL
+    document.getElementById('p-title').textContent = p.nom;
+    document.getElementById('p-price').textContent = parseFloat(p.prix).toFixed(2);
+    document.getElementById('p-description').textContent = p.description || "Aucune description détaillée n'est disponible pour cet article.";
+    document.getElementById('p-image').src = p.url_image || 'https://placehold.co/500x500?text=Image+Indisponible';
+    document.getElementById('p-category-breadcrumb').textContent = p.categorie || "Smartphone";
+
+    const badge = document.getElementById('p-stock-badge');
+    const btn = document.getElementById('add-btn');
+    
+    // Gestion de l'affichage du stock (colonne stock_actuel)
+    if (p.stock_actuel <= 0) {
+        badge.textContent = "Rupture de stock";
+        badge.className = "stock-badge bg-danger-subtle text-danger fw-bold";
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-times-circle me-2"></i>Indisponible`;
+        btn.className = "btn btn-secondary btn-lg w-100 py-3 shadow-none";
+    } else {
+        badge.textContent = `En stock (${p.stock_actuel})`;
+        badge.className = "stock-badge bg-success-subtle text-success fw-bold";
+        
+        // Configuration de l'événement clic pour l'ajout au panier
+        btn.onclick = () => {
+            const quantitySelector = document.getElementById('p-quantity');
+            const selectedQty = parseInt(quantitySelector.value);
+            processAddToCart(p, selectedQty);
+        };
+    }
+
+    // Affichage du contenu et masquage du spinner
+    document.getElementById('loading').classList.add('d-none');
+    document.getElementById('product-details').classList.remove('d-none');
+}
+
+/**
+ * Gère l'ajout des articles dans le localStorage
+ */
+function processAddToCart(p, qty) {
+    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+    
+    // Vérifier si le produit est déjà présent
+    const existingIndex = cart.findIndex(item => item.id === p.id_produit);
+    
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity += qty;
+    } else {
+        cart.push({
+            id: p.id_produit,
+            name: p.nom,
+            price: p.prix,
+            image: p.url_image,
+            quantity: qty
+        });
+    }
+    
+    // Sauvegarde et mise à jour de l'UI
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+    updateCartBadge();
+    
+    // Animation de succès sur le bouton
+    const btn = document.getElementById('add-btn');
+    const originalContent = btn.innerHTML;
+    
+    btn.innerHTML = `<i class="fas fa-check-circle me-2"></i>Ajouté au panier !`;
+    btn.className = "btn btn-success btn-lg w-100 fw-bold py-3 shadow";
+    
+    setTimeout(() => {
+        btn.innerHTML = originalContent;
+        btn.className = "btn btn-primary btn-lg w-100 fw-bold py-3 shadow";
+    }, 2500);
+}
+
+/**
+ * Met à jour le compteur du panier dans la barre de navigation
+ */
+function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const badge = document.getElementById('cartBadge');
+    if (badge) {
+        badge.textContent = totalItems;
+    }
+}
+
+/**
+ * Affiche le nom de l'utilisateur s'il est connecté
+ */
+function updateAuthDisplay() {
+    const userName = localStorage.getItem('userName');
+    const loginLink = document.getElementById('loginLink');
+    
+    if (userName && loginLink) {
+        loginLink.innerHTML = `<i class="fas fa-user-circle me-1"></i>${userName}`;
+        loginLink.classList.add('text-white', 'fw-bold');
+        // Optionnel : Transformer en menu de déconnexion
+        loginLink.onclick = (e) => {
+            if(confirm("Voulez-vous vous déconnecter ?")) {
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userName');
+                window.location.reload();
+            }
+        };
+    }
+}
+    </script>
+</body>
+</html>
