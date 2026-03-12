@@ -625,7 +625,7 @@ function renderCart() {
             </div>
           </div>
         </td>
-        <td>${parseFloat(item.price).toFixed(2)} €</td>
+        <td style="white-space:nowrap;">${parseFloat(item.price).toFixed(2)} €</td>
         <td>
           <div style="display:flex; gap:6px; width:130px;">
             <button style="flex:1;padding:6px 8px;border:1.5px solid #e8e8e8;background:#fff;border-radius:8px;cursor:pointer;font-size:0.9rem;color:#6b7280;font-weight:600;"
@@ -636,7 +636,7 @@ function renderCart() {
                     type="button" onclick="changeQuantity(${item.id}, 1)">+</button>
           </div>
         </td>
-        <td style="font-weight:700;">${itemTotal.toFixed(2)} €</td>
+        <td style="font-weight:700; white-space:nowrap;">${itemTotal.toFixed(2)} €</td>
         <td>
           <button style="width:36px;height:36px;border:none;background:#dc2626;color:#fff;border-radius:10px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(220,38,38,0.2);"
                   onclick="removeItem(${item.id})">
