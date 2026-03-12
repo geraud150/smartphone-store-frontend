@@ -35,97 +35,22 @@ function displayMessage(title, message, type = 'info') {
     console.log(`${title} (${type}): ${message}`);
     return;
   }
- 
-  // Palette de couleurs selon le type — cohérente avec le design system
-  const styles = {
-    success: {
-      bg: 'rgba(22, 163, 74, 0.08)',
-      border: 'rgba(22, 163, 74, 0.25)',
-      color: '#15803d',
-      icon: 'fas fa-check-circle'
-    },
-    danger: {
-      bg: 'rgba(220, 38, 38, 0.07)',
-      border: 'rgba(220, 38, 38, 0.25)',
-      color: '#dc2626',
-      icon: 'fas fa-circle-exclamation'
-    },
-    warning: {
-      bg: 'rgba(234, 179, 8, 0.08)',
-      border: 'rgba(234, 179, 8, 0.25)',
-      color: '#ca8a04',
-      icon: 'fas fa-triangle-exclamation'
-    },
-    info: {
-      bg: 'rgba(37, 99, 235, 0.08)',
-      border: 'rgba(37, 99, 235, 0.2)',
-      color: '#2563eb',
-      icon: 'fas fa-circle-info'
-    }
-  };
- 
-  const s = styles[type] || styles.info;
- 
-  const toast = document.createElement('div');
-  toast.style.cssText = `
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    background: ${s.bg};
-    border: 1.5px solid ${s.border};
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.875rem;
-    color: #1a1a1a;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    animation: slideIn 0.3s ease;
-    position: relative;
+
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+  alertDiv.role = 'alert';
+  alertDiv.innerHTML = `
+    <strong>${title} :</strong> ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   `;
- 
-  toast.innerHTML = `
-    <i class="${s.icon}" style="color:${s.color}; font-size:1rem; margin-top:2px; flex-shrink:0;"></i>
-    <div style="flex:1; line-height:1.5;">
-      <strong style="color:${s.color};">${title}</strong>
-      ${message ? `<span style="color:#6b7280;"> — ${message}</span>` : ''}
-    </div>
-    <button onclick="this.parentElement.remove()" style="
-      background: none; border: none; cursor: pointer;
-      color: #9ca3af; font-size: 0.9rem; padding: 0;
-      line-height: 1; flex-shrink: 0; margin-top: 1px;
-      transition: color 0.2s;
-    " onmouseover="this.style.color='#1a1a1a'" onmouseout="this.style.color='#9ca3af'">
-      <i class="fas fa-xmark"></i>
-    </button>
-  `;
- 
-  // Injection de l'animation si pas encore présente
-  if (!document.getElementById('toast-style')) {
-    const style = document.createElement('style');
-    style.id = 'toast-style';
-    style.textContent = `
-      @keyframes slideIn {
-        from { opacity: 0; transform: translateX(20px); }
-        to   { opacity: 1; transform: translateX(0); }
-      }
-      @keyframes slideOut {
-        from { opacity: 1; transform: translateX(0); }
-        to   { opacity: 0; transform: translateX(20px); }
-      }
-    `;
-    document.head.appendChild(style);
-  }
- 
-  container.prepend(toast);
- 
-  // Auto-fermeture après 3.5 secondes
+
+  container.prepend(alertDiv);
+
   setTimeout(() => {
-    toast.style.animation = 'slideOut 0.3s ease forwards';
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+    const bsAlert = new bootstrap.Alert(alertDiv);
+    bsAlert.close();
+  }, 3000);
 }
- 
 
 // ==================================================================
 // FONCTIONS D'AUTHENTIFICATION
@@ -226,132 +151,30 @@ async function handleLogin(event) {
 
 function updateAuthLinks() {
   const userToken = localStorage.getItem('userToken');
-  const userName  = localStorage.getItem('userName');
+  const userName = localStorage.getItem('userName');
   const loginLink = document.getElementById('loginLink');
- 
-  if (!loginLink) return;
- 
-  if (userToken && userName) {
-    // Injection du menu custom dans le li parent
-    loginLink.parentElement.innerHTML = `
-      <li class="nav-item" id="userMenuWrapper" style="position:relative;">
-        <button id="userMenuBtn" onclick="toggleUserMenu(event)" style="
-          display: flex; align-items: center; gap: 8px;
-          background: none; border: none; cursor: pointer;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.875rem; font-weight: 600;
-          color: #1a1a1a;
-          padding: 6px 14px;
-          border-radius: 20px;
-          transition: background 0.2s;
-        "
-        onmouseover="this.style.background='#f5f5f7'"
-        onmouseout="this.style.background='none'">
-          <span style="
-            width:28px; height:28px;
-            background: rgba(37,99,235,0.10);
-            border-radius: 50%;
-            display:flex; align-items:center; justify-content:center;
-            color:#2563eb; font-size:0.75rem;
-          "><i class="fas fa-user"></i></span>
-          ${userName}
-          <i class="fas fa-chevron-down" id="userMenuChevron" style="font-size:0.65rem; color:#9ca3af; transition: transform 0.2s;"></i>
-        </button>
- 
-        <div id="userDropdownMenu" style="
-          display: none;
-          position: absolute; top: calc(100% + 8px); right: 0;
-          background: #ffffff;
-          border: 1.5px solid #e8e8e8;
-          border-radius: 16px;
-          padding: 8px;
-          min-width: 200px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-          z-index: 200;
-          animation: fadeDropdown 0.2s ease;
-        ">
-          <a href="profile.html" style="
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px; border-radius: 10px;
-            text-decoration: none; color: #1a1a1a;
-            font-size: 0.875rem; font-weight: 500;
-            transition: background 0.15s;
-          "
-          onmouseover="this.style.background='#f5f5f7'"
-          onmouseout="this.style.background='none'">
-            <i class="fas fa-user-circle" style="color:#2563eb; width:16px;"></i> Mon profil
+  const userEmail = localStorage.getItem('userEmail');
+  if (loginLink) {
+    if (userToken && userName) {
+      loginLink.parentElement.innerHTML = `
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user me-1"></i>${userName}
           </a>
- 
-          <a href="orders.html" style="
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px; border-radius: 10px;
-            text-decoration: none; color: #1a1a1a;
-            font-size: 0.875rem; font-weight: 500;
-            transition: background 0.15s;
-          "
-          onmouseover="this.style.background='#f5f5f7'"
-          onmouseout="this.style.background='none'">
-            <i class="fas fa-box" style="color:#2563eb; width:16px;"></i> Mes commandes
-          </a>
- 
-          <div style="height:1px; background:#e8e8e8; margin:6px 0;"></div>
- 
-          <a href="#" onclick="handleLogout(event)" style="
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 12px; border-radius: 10px;
-            text-decoration: none; color: #dc2626;
-            font-size: 0.875rem; font-weight: 500;
-            transition: background 0.15s;
-          "
-          onmouseover="this.style.background='rgba(220,38,38,0.06)'"
-          onmouseout="this.style.background='none'">
-            <i class="fas fa-sign-out-alt" style="width:16px;"></i> Déconnexion
-          </a>
-        </div>
-      </li>
-    `;
- 
-    // Injection de l'animation du dropdown si pas encore présente
-    if (!document.getElementById('dropdown-style')) {
-      const style = document.createElement('style');
-      style.id = 'dropdown-style';
-      style.textContent = `
-        @keyframes fadeDropdown {
-          from { opacity: 0; transform: translateY(-6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user-circle me-2"></i>Mon profil</a></li>
+            <li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2"></i>Mes commandes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout(event)"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+          </ul>
+        </li>
       `;
-      document.head.appendChild(style);
+    } else {
+      loginLink.innerHTML = `<i class="fas fa-sign-in-alt me-1"></i>Connexion`;
+      loginLink.href = 'login.html';
+      loginLink.onclick = null;
     }
- 
-    // Fermer le menu si on clique ailleurs
-    document.addEventListener('click', function closeMenu(e) {
-      const wrapper = document.getElementById('userMenuWrapper');
-      if (wrapper && !wrapper.contains(e.target)) {
-        const menu = document.getElementById('userDropdownMenu');
-        const chevron = document.getElementById('userMenuChevron');
-        if (menu) menu.style.display = 'none';
-        if (chevron) chevron.style.transform = 'rotate(0deg)';
-        document.removeEventListener('click', closeMenu);
-      }
-    });
- 
-  } else {
-    // Non connecté : bouton Connexion standard
-    loginLink.innerHTML = `Connexion`;
-    loginLink.href = 'login.html';
-    loginLink.onclick = null;
   }
-}
-
-function toggleUserMenu(event) {
-  event.stopPropagation();
-  const menu    = document.getElementById('userDropdownMenu');
-  const chevron = document.getElementById('userMenuChevron');
-  const isOpen  = menu.style.display === 'block';
- 
-  menu.style.display    = isOpen ? 'none' : 'block';
-  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
 
 function handleLogout(event) {
@@ -401,7 +224,6 @@ async function fetchCatalog() {
 
     allProducts = products;
     renderProducts();
-    if (container) container.style.display = 'grid';
   } catch (error) {
     console.error("Erreur lors du chargement du catalogue:", error);
     displayMessage('Erreur', "Impossible de charger le catalogue. Serveur hors ligne.", 'danger');
@@ -415,50 +237,46 @@ function renderProducts() {
   if (!container) return;
 
   const filteredProducts = allProducts.filter(product => {
-    if (currentCategoryFilter === 'all') return true;
+    if (currentCategoryFilter === 'all') {
+      return true;
+    }
     return product.category === currentCategoryFilter;
   });
 
   if (filteredProducts.length === 0) {
-    container.innerHTML = '<p style="grid-column:1 / -1;text-align:center;color:#6b7280;">Aucun produit trouvé dans cette catégorie.</p>';
-    return;
-  }
-
-  container.innerHTML = filteredProducts.map(product => `
-    <div class="product-card">
+    container.innerHTML = '<p class="col-12 text-center text-muted mt-5">Aucun produit trouvé dans cette catégorie.</p>';
+  } else {
+    container.innerHTML = filteredProducts.map(product => `
+      <div class="product-card">
       <a href="product-detail.html?id=${product.id}">
-        <img src="${product.image}" class="card-img" alt="${product.name}"
-             onerror="this.onerror=null;this.src='https://placehold.co/400x300/e9ecef/212529?text=Image+Non+Trouvée';">
-      </a>
-
-      <div class="card-body">
-        <p class="card-tag">${product.category}</p>
-        <h3 class="product-title">
-          <a href="product-detail.html?id=${product.id}" style="text-decoration:none;color:inherit;">
-            ${product.name}
-          </a>
-        </h3>
-        <p class="card-desc">${product.description.substring(0, 100)}...</p>
-
-        <div class="card-specs">
-          <span class="spec-pill"><i class="fas fa-memory"></i>${product.specs.ram || 'N/A'}</span>
-          <span class="spec-pill"><i class="fas fa-hard-drive"></i>${product.specs.storage || 'N/A'}</span>
-        </div>
-
-        <div class="card-footer-row">
-          <span class="product-price">${product.price.toFixed(2)} €</span>
-          <button class="btn-add-to-cart" onclick="addToCart(${product.id})">
-            <i class="fas fa-plus"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
+                <img src="${product.image}" class="card-img" alt="${product.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e9ecef/212529?text=Image+Non+Trouvée';">
+                <div class="card-body">
+                    <p class="card-tag">${product.category}</p>
+                    <h3 class="product-title">
+                    <a href="product-detail.html?id=${product.id}" class="text-decoration-none text-primary fw-bold">
+                    ${product.name}</a>
+                    </h3>
+                    <p class="card-desc">${product.description.substring(0, 100)}...</p>
+                    
+                    <div class="card-specs">
+                        <span class="spec-pill"><i class="fas fa-microchip"></i>${product.specs.ram || 'N/A'}</span>
+                        <span class="spec-pill"><i class="fas fa-hard-drive"></i>${product.specs.storage || 'N/A'}</span>
+                    </div>
+                    
+                    <div class="card-footer-row">
+                        <span class="product-price">${product.price.toFixed(2)} €</span>
+                        <button class="btn-add-to-cart" onclick="addToCart(${product.id})">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
 
 
     if (container) container.style.display = 'grid';
-
+}
 function setCategoryFilter(category, clickedButton) {
   currentCategoryFilter = category;
 
@@ -616,38 +434,42 @@ function renderCart() {
   cartTableBody.innerHTML = cart.map(item => {
     const itemTotal = parseFloat(item.price) * item.quantity;
     total += itemTotal;
-
     return `
-      <tr>
-        <td>
-          <div style="display:flex; align-items:center; gap:12px;">
-            <img src="${item.image}" alt="${item.name}"
-                 style="width:60px;height:60px;object-fit:cover;border-radius:12px;border:1px solid #e8e8e8;background:#f5f5f7;"
-                 onerror="this.src='https://placehold.co/60x60/f5f5f7/9ca3af?text=IMG';">
-            <div>
-              <div style="font-weight:600;font-size:0.9rem;">${item.name}</div>
-            </div>
-          </div>
-        </td>
-        <td>${parseFloat(item.price).toFixed(2)} €</td>
-        <td>
-          <div style="display:flex; gap:6px; width:130px;">
-            <button style="flex:1;padding:6px 8px;border:1.5px solid #e8e8e8;background:#fff;border-radius:8px;cursor:pointer;font-size:0.9rem;color:#6b7280;font-weight:600;"
-                    type="button" onclick="changeQuantity(${item.id}, -1)">−</button>
-            <input type="text" style="flex:1;text-align:center;border:1.5px solid #e8e8e8;border-radius:8px;padding:6px 4px;font-size:0.9rem;background:#fff;color:#1a1a1a;"
-                   value="${item.quantity}" readonly>
-            <button style="flex:1;padding:6px 8px;border:1.5px solid #e8e8e8;background:#fff;border-radius:8px;cursor:pointer;font-size:0.9rem;color:#6b7280;font-weight:600;"
-                    type="button" onclick="changeQuantity(${item.id}, 1)">+</button>
-          </div>
-        </td>
-        <td style="font-weight:700;">${itemTotal.toFixed(2)} €</td>
-        <td>
-          <button style="width:36px;height:36px;border:none;background:#dc2626;color:#fff;border-radius:10px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(220,38,38,0.2);"
-                  onclick="removeItem(${item.id})">
-            <i class="fas fa-trash-alt"></i>
-          </button>
-        </td>
-      </tr>
+       <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="${item.image}" alt="${item.name}" 
+                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;" 
+                             onerror="this.src='https://placehold.co/60x60/e9ecef/212529?text=IMG';">
+                        <div>
+                            <h6 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: #1a1a1a;">${item.name}</h6>
+                        </div>
+                    </div>
+                </td>
+                <td style="color: #6b7280;">${parseFloat(item.price).toFixed(2)} €</td>
+                <td>
+                    <div style="display: flex; gap: 6px; width: 130px;">
+                        <button style="flex: 1; padding: 6px 8px; border: 1.5px solid #e8e8e8; background: white; border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: #6b7280; transition: all 0.2s; font-weight: 600;" 
+                                onmouseover="this.style.borderColor='#2563eb'; this.style.color='#2563eb'; this.style.background='#f5f5f7';" 
+                                onmouseout="this.style.borderColor='#e8e8e8'; this.style.color='#6b7280'; this.style.background='white';" 
+                                type="button" onclick="changeQuantity(${item.id}, -1)">−</button>
+                        <input type="text" style="flex: 1; text-align: center; border: 1.5px solid #e8e8e8; border-radius: 8px; padding: 6px 4px; font-size: 0.9rem; background: white; color: #1a1a1a;" value="${item.quantity}" readonly>
+                        <button style="flex: 1; padding: 6px 8px; border: 1.5px solid #e8e8e8; background: white; border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: #6b7280; transition: all 0.2s; font-weight: 600;" 
+                                onmouseover="this.style.borderColor='#2563eb'; this.style.color='#2563eb'; this.style.background='#f5f5f7';" 
+                                onmouseout="this.style.borderColor='#e8e8e8'; this.style.color='#6b7280'; this.style.background='white';" 
+                                type="button" onclick="changeQuantity(${item.id}, 1)">+</button>
+                    </div>
+                </td>
+                <td style="font-weight: 700; color: #1a1a1a;">${itemTotal.toFixed(2)} €</td>
+                <td>
+                    <button style="width: 36px; height: 36px; border: none; background: #dc2626; color: white; border-radius: 10px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);" 
+                            onmouseover="this.style.backgroundColor='#b91c1c'; this.style.boxShadow='0 4px 12px rgba(220, 38, 38, 0.3)';" 
+                            onmouseout="this.style.backgroundColor='#dc2626'; this.style.boxShadow='0 2px 8px rgba(220, 38, 38, 0.2)';" 
+                            onclick="removeItem(${item.id})">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
     `;
   }).join('');
 
@@ -655,7 +477,6 @@ function renderCart() {
   totalAmount.textContent = total.toFixed(2) + ' €';
   if (itemCount) itemCount.textContent = cart.length;
 }
-
 
 // ==================================================================
 // GESTION DES COMMANDES
