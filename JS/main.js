@@ -29,7 +29,7 @@ let currentCategoryFilter = 'all';
  * Affiche un message flottant à la place de window.alert()
  */
 function displayMessage(title, message, type = 'info') {
-  const container = document.getElementById('messageContainer');
+  const container = document.getElementById('messageContainer') || document.getElementById('authMessage');
   if (!container) {
     console.warn("MessageContainer non trouvé.");
     console.log(`${title} (${type}): ${message}`);
@@ -195,12 +195,9 @@ async function handleLogin(event) {
     if (response.ok) {
       localStorage.setItem('userToken', result.token);
       localStorage.setItem('userName', result.user.name);
-      localStorage.setItem('userEmail', result.user.email);
-      messageContainer.innerHTML = `
-        <div class="alert alert-success">
-          Connexion réussie ! Redirection...
-        </div>
-      `;
+      localStorage.setItem('userEmail', result.user.email); 
+
+      displayMessage('Connexion', 'Connexion réussie ! Redirection...', 'success');
 
       setTimeout(() => {
         window.location.href = 'index.html';
@@ -625,18 +622,18 @@ function renderCart() {
             </div>
           </div>
         </td>
-        <td style="white-space:nowrap;">${parseFloat(item.price).toFixed(2)} €</td>
+        <td>${parseFloat(item.price).toFixed(2)} €</td>
         <td>
-          <div style="display:flex; gap:6px; width:130px;">
+          <div style="display:flex; gap:6px; width:110px;">
             <button style="flex:1;padding:6px 8px;border:1.5px solid #e8e8e8;background:#fff;border-radius:8px;cursor:pointer;font-size:0.9rem;color:#6b7280;font-weight:600;"
                     type="button" onclick="changeQuantity(${item.id}, -1)">−</button>
-            <input type="text" style="flex:1;text-align:center;border:1.5px solid #e8e8e8;border-radius:8px;padding:6px 4px;font-size:0.9rem;background:#fff;color:#1a1a1a;"
+            <input type="text" style="flex:1;text-align:center;border:1.5px solid #e8e8e8;border-radius:8px;padding:6px 4px;font-size:0.9rem;background:#fff;color:#1a1a1a; width:28px;"
                    value="${item.quantity}" readonly>
             <button style="flex:1;padding:6px 8px;border:1.5px solid #e8e8e8;background:#fff;border-radius:8px;cursor:pointer;font-size:0.9rem;color:#6b7280;font-weight:600;"
                     type="button" onclick="changeQuantity(${item.id}, 1)">+</button>
           </div>
         </td>
-        <td style="font-weight:700; white-space:nowrap;">${itemTotal.toFixed(2)} €</td>
+        <td style="font-weight:700;">${itemTotal.toFixed(2)} €</td>
         <td>
           <button style="width:36px;height:36px;border:none;background:#dc2626;color:#fff;border-radius:10px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(220,38,38,0.2);"
                   onclick="removeItem(${item.id})">
