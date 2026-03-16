@@ -158,19 +158,13 @@ async function handleRegister(event) {
         window.location.href = 'login.html';
       }, 2000);
     } else {
-      messageContainer.innerHTML = `
-        <div class="alert alert-danger">
-          ${result.message}
-        </div>
-      `;
+      displayMessage('Erreur', result.message || "Inscription impossible.", 'danger');
+
     }
   } catch (error) {
     console.error('Erreur inscription:', error);
-    messageContainer.innerHTML = `
-      <div class="alert alert-danger">
-        Erreur serveur. Vérifiez que l'API est démarrée sur le port 3000.
-      </div>
-    `;
+    displayMessage('Erreur', "Erreur serveur. Vérifiez que l'API est démarrée sur le port 3000.", 'danger');
+
   }
 }
 
@@ -203,22 +197,13 @@ async function handleLogin(event) {
         window.location.href = 'index.html';
       }, 1500);
     } else {
-      messageContainer.innerHTML = `
-        <div class="alert alert-danger">
-          ${result.message}
-        </div>
-      `;
+      displayMessage('Erreur', result.message || 'Email ou mot de passe incorrect', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur connexion:', error);
+        displayMessage('Erreur', "Erreur serveur. Vérifiez que l'API Node.js est démarrée sur le port 3000.", 'danger');
     }
-  } catch (error) {
-    console.error('Erreur connexion:', error);
-    messageContainer.innerHTML = `
-      <div class="alert alert-danger">
-        Erreur serveur. Vérifiez que l'API Node.js est démarrée sur le port 3000.
-      </div>
-    `;
-  }
 }
-
 function updateAuthLinks() {
   const userToken = localStorage.getItem('userToken');
   const userName  = localStorage.getItem('userName');
