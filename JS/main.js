@@ -551,6 +551,7 @@ async function handleCheckout() {
   }
 
     // 4. Interface : desactiver le bouton pour eviter les doubles clics
+    if (token) {
     const originalContent = checkoutBtn ? checkoutBtn.innerHTML : "";
     if (checkoutBtn) {
         checkoutBtn.disabled = true;
@@ -567,6 +568,160 @@ async function handleCheckout() {
             checkoutBtn.innerHTML = originalContent;
         }
     }, 1500);
+}
+
+  // 5. Si pas connecté, afficher la gate de checkout pour saisir l'email et vérifier l'existence du compte
+    openCheckoutGate();
+}
+function openCheckoutGate() {
+    const overlay = document.getElementById('checkoutGate');
+    if (!overlay) return;
+    overlay.classList.add('open');
+
+    const savedEmail = localStorage.getItem('guest_email') || localStorage.getItem('checkout_email') || '';
+    const emailInput = document.getElementById('checkoutEmail');
+    if (emailInput && savedEmail) emailInput.value = savedEmail;
+
+    resetCheckoutGate();
+}
+
+function closeCheckoutGate() {
+    const overlay = document.getElementById('checkoutGate');
+    if (overlay) overlay.classList.remove('open');
+}
+
+function resetCheckoutGate() {
+    const note = document.getElementById('checkoutGateNote');
+    const passWrap = document.getElementById('checkoutPasswordWrap');
+    const actions = document.getElementById('checkoutActions');
+    if (note) note.textContent = '';
+    if (passWrap) passWrap.style.display = 'none';
+    if (actions) {
+        actions.innerHTML = `<button class="btn-continue-email" type="button" onclick="continueCheckoutWithEmail()">Continuer</button>`;
+    }
+}
+
+async function continueCheckoutWithEmail() {
+    const emailInput = document.getElementById('checkoutEmail');
+    const note = document.getElementById('checkoutGateNote');
+    if (!emailInput || !emailInput.value.trim()) {
+        if (note) note.textContent = "Veuillez saisir un email valide.";
+        return;
+    }
+
+    const email = emailInput.value.trim().toLowerCase();
+    localStorage.setItem('checkout_email', email);
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/check-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+
+        const result = await response.json();
+        if (response.ok && result.exists) {
+            showLoginInGate();
+        } else {
+            showGuestOptions();
+        }
+    } catch (error) {
+        if (note) note.textContent = "Impossible de vérifier l'email. Réessayez.";
+    }
+}
+
+function showLoginInGate() {
+    const passWrap = document.getElementById('checkoutPasswordWrap');
+    const actions = document.getElementById('checkoutActions');
+    const note = document.getElementById('checkoutGateNote');
+    if (passWrap) passWrap.style.display = 'block';
+    if (note) note.textContent = "Un compte existe. Connectez-vous pour continuer.";
+    if (actions) {
+        actions.innerHTML = `
+            <button class="btn-gate-login" type="button" onclick="loginFromGate()">Se connecter</button>
+        `;
+    }
+}
+
+function showGuestOptions() {
+    const actions = document.getElementById('checkoutActions');
+    const note = document.getElementById('checkoutGateNote');
+    if (note) note.textContent = "Aucun compte trouvé. Vous pouvez créer un compte ou continuer en invité.";
+    if (actions) {
+        actions.innerHTML = `
+            <button class="btn-guest" type="button" onclick="continueAsGuest()">Continuer comme invité</button>
+            <button class="btn-continue-email" type="button" onclick="goToRegister()">Créer un compte</button>
+        `;
+    }
+}
+
+async function loginFromGate() {
+    const emailInput = document.getElementById('checkoutEmail');
+    const passwordInput = document.getElementById('checkoutPassword');
+    const note = document.getElementById('checkoutGateNote');
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+    const password = passwordInput ? passwordInput.value : '';
+
+    if (!email || !password) {
+        if (note) note.textContent = "Email et mot de passe requis.";
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            if (note) note.textContent = result.message || "Identifiants incorrects.";
+            return;
+        }
+
+        localStorage.setItem('userToken', result.token);
+        localStorage.setItem('userName', result.user.name);
+        localStorage.removeItem('guest_email');
+        localStorage.removeItem('guest_token');
+        localStorage.removeItem('guest_mode');
+
+        window.location.href = "checkout.html";
+    } catch (error) {
+        if (note) note.textContent = "Connexion impossible. Réessayez.";
+    }
+}
+
+async function continueAsGuest() {
+    const emailInput = document.getElementById('checkoutEmail');
+    const note = document.getElementById('checkoutGateNote');
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+    if (!email) {
+        if (note) note.textContent = "Veuillez saisir un email valide.";
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/guest-session`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const result = await response.json();
+        const token = result.guest_token || `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem('guest_token', token);
+        localStorage.setItem('guest_email', email);
+        localStorage.setItem('guest_mode', 'true');
+        window.location.href = "checkout.html";
+    } catch (error) {
+        if (note) note.textContent = "Impossible de créer une session invité.";
+    }
+}
+
+function goToRegister() {
+    const emailInput = document.getElementById('checkoutEmail');
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+    if (email) localStorage.setItem('checkout_email', email);
+    window.location.href = "register.html";
 }
 function renderCart() {
   const cart = getCart();
