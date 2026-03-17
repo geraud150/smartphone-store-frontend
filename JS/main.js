@@ -544,12 +544,6 @@ async function handleCheckout() {
         return;
     }
 
-     if (!token) {
-    displayMessage('Erreur', "Vous devez être connecté pour passer commande.", 'danger');
-    setTimeout(() => window.location.href = 'login.html', 2000);
-    return;
-  }
-
     // 4. Interface : desactiver le bouton pour eviter les doubles clics
     if (token) {
     const originalContent = checkoutBtn ? checkoutBtn.innerHTML : "";
