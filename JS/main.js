@@ -992,7 +992,110 @@ async function refreshProductStockDisplay(productId) {
   }
 }
 
+async function checkGuestStatusOnSuccess() {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('orderId');
+  const box = document.getElementById('guestConvertBox');
+  const email = (localStorage.getItem('guest_email') || localStorage.getItem('checkout_email') || '').trim().toLowerCase();
+  if (!email) {
+   box.style.display = 'none';
+   return;
+  }
+  if (!orderId || !box) return;
 
+  try {
+    
+const response = await fetch(`${API_BASE_URL}/orders/${orderId}/guest-status?email=${encodeURIComponent(email)}`)
+
+    const result = await response.json();
+
+    if (!response.ok || result.is_guest === 0) {
+      box.style.display = 'none';
+    } else {
+  box.classList.remove('hidden');
+  box.style.display = 'block';
+  }
+  } catch (e) {
+    // si erreur, on peut choisir de cacher par sécurité
+    box.style.display = 'none';
+  }
+}
+
+async function convertGuestToUser() {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('orderId');
+  const password = document.getElementById('guestPassword')?.value?.trim();
+  const messageEl = document.getElementById('convertMessage');
+
+  if (!orderId) {
+    if (messageEl) {
+      messageEl.classList.remove('hidden');
+      messageEl.textContent = "Commande introuvable.";
+    }
+    return;
+  }
+
+  if (!password || password.length < 6) {
+    if (typeof displayMessage === 'function') {
+      displayMessage('Compte', 'Mot de passe trop court (min 6).', 'warning');
+    }
+    if (messageEl) {
+      messageEl.classList.remove('hidden');
+      messageEl.textContent = "Mot de passe trop court (min 6).";
+    }
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/convert-guest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, password })
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      if (result.token) {
+        localStorage.setItem('userToken', result.token);
+        localStorage.setItem('userName', result.user?.name || 'Client');
+      }
+
+      if (typeof displayMessage === 'function') {
+        displayMessage('Compte', 'Compte créé. Redirection vers vos commandes…', 'success');
+      }
+
+      if (messageEl) {
+        messageEl.classList.remove('hidden');
+        messageEl.textContent = "Compte créé ! Redirection vers vos commandes...";
+      }
+
+      setTimeout(() => {
+        window.location.href = 'orders.html';
+      }, 1200);
+
+      return;
+    }
+
+    const msg = result.message || "Erreur de conversion.";
+    if (typeof displayMessage === 'function') {
+      displayMessage('Compte', msg, 'danger');
+    }
+    if (messageEl) {
+      messageEl.classList.remove('hidden');
+      messageEl.textContent = msg;
+    }
+
+  } catch (err) {
+    if (typeof displayMessage === 'function') {
+      displayMessage('Serveur', 'Erreur serveur.', 'danger');
+    }
+    if (messageEl) {
+      messageEl.classList.remove('hidden');
+      messageEl.textContent = "Erreur serveur.";
+    }
+  }
+}
 // ==================================================================
 // INITIALISATION GLOBALE
 // ==================================================================
