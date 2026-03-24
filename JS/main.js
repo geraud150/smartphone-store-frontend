@@ -996,31 +996,40 @@ async function checkGuestStatusOnSuccess() {
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get('orderId');
   const box = document.getElementById('guestConvertBox');
-  const email = (localStorage.getItem('guest_email') || localStorage.getItem('checkout_email') || '').trim().toLowerCase();
-  if (!email) {
+
+  if (!orders || !box) {
    box.style.display = 'none';
    return;
   }
-  if (!orderId || !box) return;
+  const token = localStorage.getItem('userToken');
+  const guestToken = (localStorage.getItem('guest_token') || '').trim();
+  const headers = { };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  else if (guestToken) headers['X-Guest-Token'] = guestToken;
 
   try {
     
-const response = await fetch(`${API_BASE_URL}/orders/${orderId}/guest-status?email=${encodeURIComponent(email)}`)
+    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, { headers })
+    if (!response.ok) throw new Error('forbidden');
+    const order = await response.json();
 
-    const result = await response.json();
+    const idEl = document.getElementById('displayOrderId');
+    if (idEl) idEl.textContent = order.id_commande;
 
-    if (!response.ok || result.is_guest === 0) {
-      box.style.display = 'none';
-    } else {
-  box.classList.remove('hidden');
-  box.style.display = 'block';
-  }
-  } catch (e) {
-    // si erreur, on peut choisir de cacher par sécurité
-    box.style.display = 'none';
+if (box) {
+      if (Number(order.is_guest) === 1) {
+        box.classList.remove('hidden');
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+      }
+    }
+  } catch {
+    displayMessage('Accès', 'Commande non autorisée ou introuvable.', 'warning');
+setTimeout(() => window.location.replace('cart.html'), 1200);
+
   }
 }
-
 async function convertGuestToUser() {
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get('orderId');
@@ -1047,9 +1056,13 @@ async function convertGuestToUser() {
   }
 
   try {
+    const guestToken = (localStorage.getItem('guest_token') || '').trim();
+    const headers = { 'Content-Type': 'application/json' };
+    if (guestToken) headers['X-Guest-Token'] = guestToken;
+
     const response = await fetch(`${API_BASE_URL}/convert-guest`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ orderId, password })
     });
 

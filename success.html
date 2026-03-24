@@ -464,8 +464,6 @@
     <script>
         // ── Ordre ID depuis URL ──
         const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('orderId');
-        if (orderId) document.getElementById('displayOrderId').textContent = orderId;
 
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof updateAuthLinks === 'function') updateAuthLinks();
